@@ -1,0 +1,54 @@
+# Netlify configuration for R Paul's Guitar Academy
+#
+# This file tells Netlify two things:
+#   1. Which folder holds the files the public is allowed to download.
+#   2. Which folder holds server-side code (used later, in Phase 6).
+#
+# Put this file at the TOP level of your repository — not inside public/.
+#
+# Your repo should look like this:
+#
+#   guitar-academy/
+#   ├── netlify.toml              <- this file
+#   ├── public/
+#   │   └── index.html            <- the app; anyone can download this
+#   └── netlify/
+#       └── functions/            <- server code; nobody can download this
+#           └── curriculum-locked.json   (added in Phase 6)
+
+[build]
+  # Everything inside "public" is served to the internet.
+  # Anything OUTSIDE it is not. That separation is what protects months 2-12.
+  publish = "public"
+
+  # Where server-side functions live. The folder can be empty for now;
+  # Netlify simply won't find any functions to deploy yet.
+  functions = "netlify/functions"
+
+# No build command is needed. The app is a single, finished HTML file —
+# there is nothing to compile, bundle, or generate.
+
+
+# ---------------------------------------------------------------------------
+# Security headers. Not required to get the site working, but they cost
+# nothing and they close off some common attacks.
+# ---------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    # Stops browsers from guessing file types, which can turn a harmless
+    # upload into an executable script.
+    X-Content-Type-Options = "nosniff"
+
+    # Stops other sites from embedding yours inside a hidden frame and
+    # tricking your users into clicking things (clickjacking).
+    X-Frame-Options = "DENY"
+
+    # Don't leak the full URL your visitor came from to other sites.
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # The app never needs the camera or location. The microphone IS needed
+    # for the fretboard tuner, so "self" keeps that working while denying
+    # the rest.
+    Permissions-Policy = "camera=(), geolocation=(), microphone=(self)"

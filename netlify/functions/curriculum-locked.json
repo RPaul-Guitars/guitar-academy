@@ -1,0 +1,150 @@
+{
+  "schema": "guitar-academy-curriculum",
+  "version": 1,
+  "note": "Paid curriculum detail for months 2-12 (zero-based keys). Serve ONLY to entitled users.",
+  "months": {
+    "1": {
+      "items": [
+        "Practice changing between all Month 1 chords with zero pause, metronome at 60-80 bpm.",
+        "Introduce syncopated strumming (the \"and\" of beat 2 missed on purpose).",
+        "Fretboard: natural notes on A and D strings, frets 0-5.",
+        "Ear training: major vs. minor triads by sound alone."
+      ],
+      "tools": [
+        "Rhythm",
+        "Chord Progressions",
+        "Fretboard",
+        "Ear Training"
+      ]
+    },
+    "2": {
+      "items": [
+        "Play I–IV–V in three different keys (G, C, A).",
+        "Learn the 12-bar blues form and play it with a shuffle strum.",
+        "Alternating-bass strumming pattern (Travis-picking lite).",
+        "Ear training: perfect 4th and perfect 5th recognition."
+      ],
+      "tools": [
+        "Chord Progressions",
+        "Rhythm",
+        "Ear Training"
+      ]
+    },
+    "3": {
+      "items": [
+        "E-shape and A-shape barre chords, movable up and down the neck.",
+        "16th-note strumming patterns at moderate tempo.",
+        "Full fretboard note drill: every string, every fret up to 12.",
+        "Play I–V–vi–IV using barre shapes instead of open chords."
+      ],
+      "tools": [
+        "Chord Progressions",
+        "Rhythm",
+        "Fretboard"
+      ]
+    },
+    "4": {
+      "items": [
+        "Learn the 5 CAGED chord shapes and how they overlap on the neck.",
+        "Understand capo transposition using CAGED logic.",
+        "Minor pentatonic \"Box 1\" shape, memorized in at least 3 keys.",
+        "Ear training: add diminished and augmented triads to your set (Level 2)."
+      ],
+      "tools": [
+        "Fretboard",
+        "Soloing & Improv",
+        "Ear Training"
+      ]
+    },
+    "5": {
+      "items": [
+        "Minor pentatonic across all 5 neck positions.",
+        "Major pentatonic — and where it overlaps with minor pentatonic.",
+        "Blues scale (pentatonic + the \"blue note\").",
+        "Call-and-response: play a 2-bar lick, repeat it back from memory."
+      ],
+      "tools": [
+        "Soloing & Improv",
+        "Fretboard"
+      ]
+    },
+    "6": {
+      "items": [
+        "Solo over a 12-bar blues backing loop using the blues scale.",
+        "String bending and vibrato control — pitch accuracy first, speed later.",
+        "Play and internalize the ii–V–I progression.",
+        "Ear training: 6ths and 7ths (Level 2)."
+      ],
+      "tools": [
+        "Soloing & Improv",
+        "Rhythm",
+        "Ear Training"
+      ]
+    },
+    "7": {
+      "items": [
+        "Dorian and Mixolydian modes — where they live over familiar chords.",
+        "Legato technique: hammer-ons and pull-offs for smoother phrasing.",
+        "Try soloing over a jazzier ii-V-I loop using chord tones, not just scales.",
+        "Ear training: identify scale degree of a played note against a root (functional ear training)."
+      ],
+      "tools": [
+        "Soloing & Improv",
+        "Ear Training"
+      ]
+    },
+    "8": {
+      "items": [
+        "Alternate picking drills with the metronome, ramping 5 bpm at a time.",
+        "Full-neck scale fluency: play any scale starting on any string.",
+        "Chord-tone soloing: target the 3rd and 7th of each chord in a progression.",
+        "Ear training: full interval set, Level 3."
+      ],
+      "tools": [
+        "Rhythm",
+        "Fretboard",
+        "Soloing & Improv",
+        "Ear Training"
+      ]
+    },
+    "9": {
+      "items": [
+        "Introduce tapping and basic sweep-picking shapes.",
+        "Play in odd time signatures (5/4, 7/8) using the metronome.",
+        "Learn one borrowed-chord progression (e.g. i–VI–III–VII, or a secondary dominant).",
+        "Ear training: identify a full 3-4 chord progression by ear."
+      ],
+      "tools": [
+        "Rhythm",
+        "Chord Progressions",
+        "Ear Training"
+      ]
+    },
+    "10": {
+      "items": [
+        "Transcribe (by ear) a short phrase each from a blues, classic rock, metal, and alt-rock solo.",
+        "Practice a polyrhythmic feel (3-against-4 clapping, then on guitar).",
+        "Fretboard sight-reading: name notes faster than your quiz best time.",
+        "Improvise over all four backing loop types from the Soloing tool."
+      ],
+      "tools": [
+        "Soloing & Improv",
+        "Fretboard",
+        "Rhythm"
+      ]
+    },
+    "11": {
+      "items": [
+        "Learn 3 full songs from intro to end, in different styles.",
+        "Record yourself and self-critique against your Month 1 recording.",
+        "Two freeform improvisation sessions with no backing track at all.",
+        "Set your next-year goals: genre depth, technique, or theory."
+      ],
+      "tools": [
+        "Chord Progressions",
+        "Soloing & Improv",
+        "Rhythm"
+      ]
+    }
+  }
+}
