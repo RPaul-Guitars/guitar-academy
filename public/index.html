@@ -358,6 +358,45 @@ select{ max-width:100%; }
   color:var(--cream-dim); padding:2px 8px; border-radius:999px; margin-left:8px;
 }
 .month.is-locked .title{ opacity:0.85; }
+.locked-compact{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; flex-wrap:wrap;
+  border:1px dashed var(--amber-dim); border-radius:10px;
+  padding:10px 14px; background:rgba(168,99,31,0.05);
+}
+.locked-compact p{margin:0; font-size:13px;}
+.plan-grid{
+  display:grid; gap:12px; margin-top:14px;
+  grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+}
+.plan-card{
+  background:var(--panel); border:1px solid var(--panel-line);
+  border-radius:10px; padding:14px;
+  display:flex; flex-direction:column;
+}
+.plan-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.plan-label{
+  font-family:'Oswald', 'Haettenschweiler', 'Arial Narrow Bold', 'Impact', 'Segoe UI', sans-serif;
+  font-size:15px; letter-spacing:0.02em; color:var(--cream);
+}
+.plan-badge{
+  font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+  background:var(--green); color:#fff8ef; border-radius:999px; padding:2px 8px;
+}
+.plan-price{
+  font-family:'Oswald', 'Haettenschweiler', 'Arial Narrow Bold', 'Impact', 'Segoe UI', sans-serif;
+  font-size:26px; margin:6px 0 4px; color:var(--amber-text);
+}
+.plan-blurb{font-size:13px; margin:0 0 12px; flex:1;}
+.plan-btn{margin-top:auto; width:100%;}
+.renewal-notice{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  flex-wrap:wrap;
+  background:rgba(168,99,31,0.08); border:1px solid var(--amber-dim);
+  border-radius:10px; padding:12px 14px; margin-bottom:14px;
+}
+.renewal-notice p{margin:0; font-size:13px;}
+.access-line{font-size:12px; margin:10px 0 0;}
 .redeem-box{
   margin-top:14px; padding-top:14px;
   border-top:1px solid var(--panel-line);
@@ -1337,10 +1376,32 @@ const LICENSING = {
   apiBase: null,                 // e.g. 'https://api.yourdomain.com'
   credentials: 'include',        // send cookies; switch to 'omit' if you use bearer tokens
   authToken: null,               // optional: 'Bearer ...' if not using cookies
-  purchaseUrl: null,             // where the Unlock button sends people
+
+  /* Two ways to buy Months 2-12. Both resolve to the same entitlement underneath:
+     'annual' sets an expiry date one year out, 'lifetime' sets no expiry at all.
+     Set each purchaseUrl to its Stripe payment link / checkout route. */
+  plans: {
+    annual: {
+      key:'annual',
+      label:'1 year of access',
+      price:'$49.99',
+      blurb:'The full program for twelve months &mdash; long enough to finish it at the intended pace.',
+      purchaseUrl:null,
+    },
+    lifetime: {
+      key:'lifetime',
+      label:'Unlimited access',
+      price:'$79.99',
+      blurb:'Keep Months 2&ndash;12 permanently, with no renewal date. Best if you expect to revisit the material.',
+      purchaseUrl:null,
+      badge:'Best value',
+    },
+  },
+  // How many days before an annual term ends to start showing a renewal reminder.
+  renewalNoticeDays: 30,
 };
 
-let entitlement = { status:'free', expiresAt:null, checkedAt:null };
+let entitlement = { status:'free', plan:null, expiresAt:null, checkedAt:null };
 
 function entitlementActive(){
   if(entitlement.status !== 'full') return false;
@@ -1351,8 +1412,24 @@ function entitlementExpired(){
   return entitlement.status === 'full' && entitlement.expiresAt
       && new Date(entitlement.expiresAt).getTime() <= Date.now();
 }
-function monthUnlocked(idx){
-  return idx < FREE_MONTH_COUNT || entitlementActive();
+/* Whole days left on a term. null for lifetime or when there's no entitlement. */
+function entitlementDaysLeft(){
+  if(entitlement.status !== 'full' || !entitlement.expiresAt) return null;
+  const ms = new Date(entitlement.expiresAt).getTime() - Date.now();
+  return Math.ceil(ms / 86400000);
+}
+function entitlementIsLifetime(){
+  return entitlement.status === 'full' && !entitlement.expiresAt;
+}
+/* True when an annual term is close enough to its end that the user should be told. */
+function renewalDueSoon(){
+  const d = entitlementDaysLeft();
+  return d !== null && d > 0 && d <= LICENSING.renewalNoticeDays;
+}
+function formatExpiry(){
+  if(!entitlement.expiresAt) return '';
+  return new Date(entitlement.expiresAt).toLocaleDateString(undefined,
+    {year:'numeric', month:'long', day:'numeric'});
 }
 function apiHeaders(){
   const h = {'Accept':'application/json'};
@@ -1384,6 +1461,9 @@ async function loadEntitlement(){
     const data = await r.json();
     entitlement = {
       status: data.status === 'full' ? 'full' : 'free',
+      // 'annual' | 'lifetime' | null. Derived from expiresAt when the server omits it,
+      // so an older server response still produces a sensible label.
+      plan: data.plan || (data.status === 'full' ? (data.expiresAt ? 'annual' : 'lifetime') : null),
       expiresAt: data.expiresAt || null,
       checkedAt: new Date().toISOString(),
     };
@@ -1463,6 +1543,8 @@ async function submitRedeemCode(rawCode, statusEl){
     }
     entitlement = {
       status: data.entitlement.status,
+      plan: data.entitlement.plan
+            || (data.entitlement.expiresAt ? 'annual' : 'lifetime'),
       expiresAt: data.entitlement.expiresAt || null,
       checkedAt: new Date().toISOString(),
     };
@@ -1484,12 +1566,14 @@ async function submitRedeemCode(rawCode, statusEl){
 
 /* Called by the Unlock buttons. Sends people to checkout when configured; otherwise
    explains the state honestly instead of failing silently. */
-function startUnlock(){
-  if(LICENSING.purchaseUrl){
-    window.open(LICENSING.purchaseUrl, '_blank', 'noopener');
+function startUnlock(planKey){
+  const plan = LICENSING.plans[planKey];
+  if(plan && plan.purchaseUrl){
+    window.open(plan.purchaseUrl, '_blank', 'noopener');
     return;
   }
-  alert('Checkout is not connected yet.\n\nMonths 2-12 will unlock here once the store is live. Month 1 is free and fully available now.');
+  const name = plan ? plan.label : 'this option';
+  alert('Checkout is not connected yet.\n\n' + name + ' will be purchasable here once the store is live. Month 1 is free and fully available now.');
 }
 
 /* Returns title/phase always, plus items/tools when the month is unlocked and loaded. */
@@ -1979,16 +2063,41 @@ function attachToolTagHandlers(container){
     });
   });
 }
+/* The two purchase options, rendered as a pair of choice cards. Both are shown with
+   equal weight — the lifetime card carries a badge rather than being pre-selected,
+   so the user picks rather than being nudged into the pricier option. */
+function planCardsHtml(){
+  return Object.values(LICENSING.plans).map(plan=>`
+    <div class="plan-card">
+      <div class="plan-head">
+        <span class="plan-label">${plan.label}</span>
+        ${plan.badge ? `<span class="plan-badge">${plan.badge}</span>` : ''}
+      </div>
+      <p class="plan-price">${plan.price}</p>
+      <p class="muted plan-blurb">${plan.blurb}</p>
+      <button class="btn plan-btn" data-unlock="${plan.key}" type="button">Choose ${plan.label}</button>
+    </div>`).join('');
+}
+/* Compact form for the curriculum list. Repeating the full price block inside all
+   eleven locked months turns the page into a wall of identical pricing and reads as
+   nagging, so the list gets a one-line prompt and the prices appear once at the top. */
+function lockedMonthCompactHtml(idx){
+  return `
+    <div class="locked-compact">
+      <p class="muted">Part of the full program &mdash; Months 2&ndash;12.</p>
+      <button class="btn secondary" data-see-plans="1" type="button">See options</button>
+    </div>`;
+}
 function lockedMonthHtml(idx){
   const expired = entitlementExpired();
   return `
     <div class="locked-month">
       <p class="locked-title">${expired ? 'Your access has expired' : 'Month ' + (idx+1) + ' is part of the full program'}</p>
       <p class="muted">${expired
-        ? 'Renew to get Months 2&ndash;12 back. Your logged sessions, streak and fretboard progress are all still saved.'
-        : 'Month 1 is free and stays free. Unlock once to get the remaining eleven months &mdash; barre chords, CAGED, pentatonics, modes, improvisation and performance.'}</p>
+        ? 'Renew for another year, or switch to unlimited access so it never lapses again. Your logged sessions, streak and fretboard progress are all still saved.'
+        : 'Month 1 is free and stays free. Months 2&ndash;12 cover barre chords, CAGED, pentatonics, modes, improvisation and performance &mdash; choose whichever suits you.'}</p>
+      <div class="plan-grid">${planCardsHtml()}</div>
       <div class="row" style="margin-top:12px;">
-        <button class="btn" data-unlock="1" type="button">${expired ? 'Renew access' : 'Unlock Months 2&ndash;12'}</button>
         ${LICENSING.apiBase ? `<button class="btn secondary" data-redeem-toggle="1" type="button">I have a code</button>` : ''}
       </div>
       ${LICENSING.apiBase ? `
@@ -2007,7 +2116,14 @@ function lockedMonthHtml(idx){
 }
 function attachUnlockHandlers(el){
   el.querySelectorAll('[data-unlock]').forEach(b=>{
-    b.addEventListener('click', e=>{ e.stopPropagation(); startUnlock(); });
+    b.addEventListener('click', e=>{ e.stopPropagation(); startUnlock(b.dataset.unlock); });
+  });
+  el.querySelectorAll('[data-see-plans]').forEach(b=>{
+    b.addEventListener('click', e=>{
+      e.stopPropagation();
+      const panel = document.getElementById('curriculumPlans');
+      if(panel) panel.scrollIntoView({behavior:'smooth', block:'center'});
+    });
   });
   el.querySelectorAll('[data-redeem-toggle]').forEach(b=>{
     b.addEventListener('click', e=>{
@@ -2040,15 +2156,41 @@ function attachUnlockHandlers(el){
     input.addEventListener('click', e=>e.stopPropagation());
   });
 }
+/* Warns an annual subscriber before their term lapses, and offers the upgrade at the
+   one moment it is genuinely useful. Lifetime holders never see this. */
+function renewalNoticeHtml(){
+  if(!renewalDueSoon()) return '';
+  const d = entitlementDaysLeft();
+  return `
+    <div class="renewal-notice">
+      <p><b>Your access ends in ${d} day${d===1?'':'s'}</b> (${formatExpiry()}). Renew to keep Months 2&ndash;12.</p>
+      <div class="row">
+        <button class="btn" data-unlock="annual" type="button">Renew 1 year</button>
+        <button class="btn secondary" data-unlock="lifetime" type="button">Switch to unlimited</button>
+      </div>
+    </div>`;
+}
+/* A quiet, factual line telling an entitled user exactly what they hold. People who
+   have paid should never have to guess whether their access expires. */
+function accessStatusHtml(){
+  if(!entitlementActive()) return '';
+  if(entitlementIsLifetime()){
+    return `<p class="muted access-line">Unlimited access &mdash; Months 2&ndash;12 are yours permanently.</p>`;
+  }
+  const d = entitlementDaysLeft();
+  return `<p class="muted access-line">Access runs until ${formatExpiry()} (${d} day${d===1?'':'s'} left).</p>`;
+}
 function renderDashboard(){
   const idx = state.currentMonth;
   const m = monthData(idx);
   const el = document.getElementById('dashMonth');
   const body = m.unlocked
     ? `<ul class="muted" style="padding-left:18px; line-height:1.8;">${m.items.map(i=>`<li>${i}</li>`).join('')}</ul>
-       <div class="month-tools">${renderToolTags(m.tools)}</div>`
+       <div class="month-tools">${renderToolTags(m.tools)}</div>
+       ${idx >= FREE_MONTH_COUNT ? accessStatusHtml() : ''}`
     : lockedMonthHtml(idx);
   el.innerHTML = `
+    ${renewalNoticeHtml()}
     <div class="row" style="justify-content:space-between; margin-bottom:8px;">
       <h3 style="margin:0;">Month ${idx+1}: ${m.title} <span class="tag">${m.phase}</span>${m.free?' <span class="tag tag-free">Free</span>':''}</h3>
     </div>
@@ -2077,12 +2219,35 @@ function renderDashboard(){
 /* ============================= CURRICULUM VIEW ============================= */
 function renderCurriculum(){
   const el = document.getElementById('curriculumList');
-  el.innerHTML = CURRICULUM_PUBLIC.map((_,i)=>{
+  const expired = entitlementExpired();
+  // Prices shown once for the whole list, not inside every locked month.
+  const pricing = entitlementActive() ? '' : `
+    <div class="locked-month" id="curriculumPlans">
+      <p class="locked-title">${expired ? 'Your access has expired' : 'Unlock Months 2&ndash;12'}</p>
+      <p class="muted">${expired
+        ? 'Renew for another year, or switch to unlimited so it never lapses again. Your progress is all still saved.'
+        : 'Month 1 is free and stays free. The remaining eleven months cover barre chords, CAGED, pentatonics, modes, improvisation and performance.'}</p>
+      <div class="plan-grid">${planCardsHtml()}</div>
+      <div class="row" style="margin-top:12px;">
+        ${LICENSING.apiBase ? `<button class="btn secondary" data-redeem-toggle="1" type="button">I have a code</button>` : ''}
+      </div>
+      ${LICENSING.apiBase ? `
+      <div class="redeem-box" data-redeem-box hidden>
+        <label class="mono muted" for="redeemInput-cur">Redemption code</label>
+        <div class="row" style="margin-top:6px;">
+          <input type="text" id="redeemInput-cur" data-redeem-input placeholder="Enter your code"
+                 autocomplete="off" autocapitalize="characters" spellcheck="false" style="flex:1; min-width:0;">
+          <button class="btn" data-redeem-submit type="button">Redeem</button>
+        </div>
+        <p class="muted mono redeem-status" data-redeem-status></p>
+      </div>` : ''}
+    </div>`;
+  el.innerHTML = pricing + CURRICULUM_PUBLIC.map((_,i)=>{
     const m = monthData(i);
     const body = m.unlocked
       ? `<ul>${m.items.map(it=>`<li>${it}</li>`).join('')}</ul>
          <div class="month-tools">${renderToolTags(m.tools)}</div>`
-      : lockedMonthHtml(i);
+      : lockedMonthCompactHtml(i);
     return `
     <div class="month ${i===state.currentMonth?'current':''} ${m.unlocked?'':'is-locked'}" data-idx="${i}">
       <div class="month-head">
