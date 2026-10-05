@@ -358,6 +358,155 @@ select{ max-width:100%; }
   color:var(--cream-dim); padding:2px 8px; border-radius:999px; margin-left:8px;
 }
 .month.is-locked .title{ opacity:0.85; }
+.lang-chip, .start-lang{
+  display:inline-flex; align-items:center; gap:6px;
+  background:var(--panel-raised); border:1px solid var(--panel-line);
+  border-radius:999px; padding:4px 10px 4px 12px; font-size:13px;
+}
+.lang-chip select, .start-lang select{
+  background:transparent; border:none; color:var(--cream);
+  font-family:inherit; font-size:13px; padding:2px 2px; cursor:pointer; max-width:9.5em;
+}
+.start-lang{
+  margin-top:14px; background:rgba(255,248,239,0.72); border-color:var(--amber-dim);
+}
+.start-lang select{color:#3d240c;}
+@media (pointer:coarse){ .lang-chip, .start-lang{min-height:44px;} }
+.level-check{
+  position:fixed; inset:0; z-index:1200;
+  background:rgba(40,22,8,0.55);
+  display:flex; align-items:center; justify-content:center; padding:18px;
+  overflow:auto;
+}
+.level-check[hidden]{display:none;}
+.lc-card{
+  background:var(--panel); border:1px solid var(--panel-line); border-radius:14px;
+  padding:22px; max-width:520px; width:100%; position:relative;
+  box-shadow:0 18px 50px rgba(60,30,10,0.3);
+}
+.lc-card h3{
+  margin:6px 0 10px; font-family:'Oswald','Haettenschweiler','Arial Narrow Bold','Impact','Segoe UI',sans-serif;
+  font-size:19px; letter-spacing:0.01em;
+}
+.lc-step{margin:0; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--amber-text);
+  font-family:'JetBrains Mono',ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,monospace;}
+.lc-help{font-size:13px; margin:0 0 12px;}
+.lc-opts{display:flex; flex-direction:column; gap:8px; margin-top:12px;}
+.lc-opts .btn{width:100%; text-align:left;}
+.lc-neck{width:100%; height:auto; margin:6px 0 12px; background:var(--panel-raised); border-radius:8px; padding:6px;}
+.lc-cell{cursor:pointer;}
+.lc-cell:hover{fill:rgba(168,99,31,0.25);}
+.lc-cell:focus-visible{fill:rgba(168,99,31,0.35); outline:2px solid var(--amber-text);}
+.lc-fretnum{font-size:10px; fill:var(--cream-dim);}
+.lc-strname{font-size:10px; fill:var(--cream); font-weight:600;}
+.lc-chord{display:flex; justify-content:center; margin:10px 0;}
+.lc-chord svg{width:130px; height:auto;}
+.lc-chord svg line{stroke:var(--cream);}
+.lc-chord svg circle[fill="#000"]{fill:var(--cream);}
+.lc-chord svg circle[fill="none"]{stroke:var(--cream);}
+.lc-chord svg text{fill:var(--cream);}
+.lc-skip{margin-top:4px;}
+.lc-levels{display:flex; flex-direction:column; gap:10px; margin-top:14px;}
+.lc-level{
+  text-align:left; background:var(--panel-raised); border:1px solid var(--panel-line);
+  border-radius:10px; padding:12px 14px; cursor:pointer; font-family:inherit; font-size:14px;
+  display:flex; flex-direction:column; gap:4px; color:var(--cream);
+}
+.lc-level:hover{border-color:var(--amber-dim);}
+.lc-level-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+.lc-level .muted{font-size:12.5px;}
+.lc-close{
+  position:absolute; top:6px; right:8px; background:transparent; border:none;
+  color:var(--cream-dim); font-size:12px; cursor:pointer; font-family:inherit;
+  text-decoration:underline; padding:10px 12px; border-radius:8px;
+}
+.lc-close:hover{color:var(--amber-text);}
+@media (pointer:coarse){ .lc-close{min-height:44px; min-width:44px;} }
+.level-control{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+  margin-top:14px; padding-top:12px; border-top:1px solid var(--panel-line); font-size:12.5px;
+}
+.level-explain{display:inline-flex; align-items:center; gap:6px; cursor:pointer;}
+.intro-card{border-left:4px solid var(--amber-text);}
+.gloss{
+  background:none; border:none; padding:0; font:inherit; color:inherit; cursor:help;
+  border-bottom:1px dotted var(--amber-text);
+}
+.gloss:hover{color:var(--amber-text);}
+.gloss-pop{
+  position:absolute; z-index:1300; max-width:300px;
+  background:var(--panel); border:1px solid var(--amber-dim); border-radius:10px;
+  padding:10px 12px; box-shadow:0 10px 28px rgba(60,30,10,0.26);
+  display:flex; flex-direction:column; gap:4px; font-size:13px;
+}
+.gloss-pop b{color:var(--amber-text);}
+@media print{ .level-check, .gloss-pop, .level-control, .intro-card{display:none !important;} }
+/* ---------- printable practice sheets ----------
+   #printRoot is empty and hidden until a sheet is requested. During printing the app
+   itself is hidden entirely and only the sheets are laid out, one per page. */
+#printRoot{display:none;}
+.print-btn-row{margin-top:14px; padding-top:12px; border-top:1px solid var(--panel-line);}
+.print-hint{font-size:12px; margin:8px 0 0;}
+
+@media print{
+  /* Hide the application chrome. Only the sheets print. */
+  body > *:not(#printRoot){display:none !important;}
+  body.printing #printRoot{display:block !important;}
+  body{background:#fff !important; color:#000 !important;}
+  .app-backdrop, .start-screen{display:none !important;}
+
+  @page{ size:letter portrait; margin:0.5in; }
+
+  .sheet{
+    /* Each sheet is exactly one page. The copyright footer sits inside the sheet
+       rather than relying on a fixed-position element repeating, which browsers
+       handle inconsistently — this way every page carries it by construction. */
+    page-break-after:always;
+    break-after:page;
+    display:flex;
+    flex-direction:column;
+    min-height:9.4in;
+    font-family:'Work Sans', Arial, sans-serif;
+    color:#000;
+  }
+  .sheet:last-child{page-break-after:auto; break-after:auto;}
+  .sheet-head{
+    display:flex; justify-content:space-between; align-items:flex-start;
+    border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:14px;
+  }
+  .sheet-kicker{margin:0 0 3px; font-size:9pt; letter-spacing:0.06em; text-transform:uppercase; color:#444;}
+  .sheet-title{margin:0; font-size:19pt; font-family:'Oswald', Arial, sans-serif; letter-spacing:0.01em;}
+  .sheet-sub{margin:4px 0 0; font-size:10pt; color:#333;}
+  .sheet-num{margin:0; font-size:9pt; color:#444; white-space:nowrap; padding-left:12px;}
+  .sheet-body{flex:1;}
+  .sheet-foot{
+    margin-top:14px; padding-top:7px; border-top:1px solid #000;
+    font-size:7.5pt; color:#000; text-align:center; line-height:1.4;
+  }
+  .psub{font-size:11pt; margin:14px 0 6px; font-family:'Oswald', Arial, sans-serif; letter-spacing:0.01em;}
+  .pnote{font-size:9.5pt; color:#222; margin:10px 0 0; line-height:1.45;}
+  .pgrid{display:flex; flex-wrap:wrap; gap:6px 10px; justify-content:flex-start;}
+  .pcell{width:1.34in;}
+  .pbox{width:100%; height:auto;}
+  .pneck{width:100%; height:auto; margin:4px 0;}
+  .prhythm{width:100%; height:auto; margin:2px 0;}
+  .pchart{width:100%; height:auto; margin:4px 0;}
+  .pbox-name{font-size:10px; font-weight:600; font-family:'Work Sans', Arial, sans-serif;}
+  .pbox-fret{font-size:9px; font-family:'Work Sans', Arial, sans-serif;}
+  .pbox-mark{font-size:11px;}
+  .pbox-finger{font-size:8px; fill:#fff; font-weight:700;}
+  .pneck-fret{font-size:9px; fill:#444;}
+  .pneck-str{font-size:10px; fill:#000; font-weight:600;}
+  .pneck-dot-on{font-size:8px; fill:#fff; font-weight:700;}
+  .pneck-dot-off{font-size:8px; fill:#000; font-weight:600;}
+  .prhythm-arrow{font-size:17px;}
+  .prhythm-count{font-size:10px; fill:#333;}
+  .pchart-sym{font-size:15px; font-weight:600; font-family:'Work Sans', Arial, sans-serif;}
+  .ptable{width:100%; border-collapse:collapse; margin:8px 0; font-size:9.5pt;}
+  .ptable th, .ptable td{border:1px solid #000; padding:6px 7px; text-align:left;}
+  .ptable th{background:#eee; font-weight:600;}
+  .ptable td:empty{height:24px;}
+}
 .locked-compact{
   display:flex; align-items:center; justify-content:space-between;
   gap:12px; flex-wrap:wrap;
@@ -549,9 +698,11 @@ form.logform textarea{grid-column:1/-1; background:var(--panel-raised); color:va
     <p class="start-subtitle">From Novice to the Stage in One Year &mdash; ear training, rhythm, chords, fretboard fluency, and improvisation, all in one place.</p>
     <button class="start-btn" id="enterAcademyBtn">Enter the Academy →</button>
     <p class="start-hint">🔊 Tapping Enter also unlocks sound for the app</p>
+    <label class="start-lang" for="startLangSelect" title="Language"><span aria-hidden="true">🌐</span><select id="startLangSelect" aria-label="Language"></select></label>
   </div>
 </div>
 
+<div id="printRoot" aria-hidden="true"></div>
 <div class="app-backdrop" aria-hidden="true"></div>
 <div class="app">
 
@@ -565,6 +716,7 @@ form.logform textarea{grid-column:1/-1; background:var(--panel-raised); color:va
         </div>
       </div>
       <div class="row" style="gap:10px;">
+        <label class="lang-chip" for="langSelect" title="Language"><span aria-hidden="true">🌐</span><select id="langSelect" aria-label="Language"></select></label>
         <div class="streak-chip">CURRENT STREAK<b id="streakNum">0</b></div>
       </div>
     </div>
@@ -1428,7 +1580,9 @@ function renewalDueSoon(){
 }
 function formatExpiry(){
   if(!entitlement.expiresAt) return '';
-  return new Date(entitlement.expiresAt).toLocaleDateString(undefined,
+  // locTag() so the date follows the chosen language rather than the browser's locale —
+  // otherwise a Spanish UI shows "October 5, 2026".
+  return new Date(entitlement.expiresAt).toLocaleDateString(locTag(),
     {year:'numeric', month:'long', day:'numeric'});
 }
 function apiHeaders(){
@@ -1697,7 +1851,10 @@ async function loadState(){
   render();
   // One-time first-run panel. Lives here rather than in render() because render() is
   // synchronous and runs on every redraw; this only needs to be resolved once at startup.
+  await initLanguage();
+  buildLangSelects();
   await initWelcome();
+  await initLearnLevel();
 }
 
 /* ============================= AUDIO ENGINE ============================= */
@@ -1747,6 +1904,11 @@ document.getElementById('enterAcademyBtn').addEventListener('click', ()=>{
   if(heading){
     heading.setAttribute('tabindex','-1');
     heading.focus({preventScroll:true});
+  }
+  // First-run level check, now that the app itself is on screen.
+  if(LEARN.pendingCheck){
+    LEARN.pendingCheck = false;
+    setTimeout(()=>openLevelCheck(), 450);
   }
 });
 
@@ -1985,6 +2147,9 @@ function stopAllTimedActivity(opts={}){
   }
 }
 function switchView(name, recordHistory){
+  // Beginner intro card for the module being opened (no-op once dismissed or for
+  // experienced users).
+  if(typeof showModuleIntro==='function') setTimeout(()=>showModuleIntro(name), 0);
   if(!views.includes(name) || name===currentView) return;
   if(recordHistory) viewHistory.push(currentView);
   // stop the mic automatically when leaving the Fretboard tab, so it doesn't stay hot in the background
@@ -2092,7 +2257,7 @@ function lockedMonthHtml(idx){
   const expired = entitlementExpired();
   return `
     <div class="locked-month">
-      <p class="locked-title">${expired ? 'Your access has expired' : 'Month ' + (idx+1) + ' is part of the full program'}</p>
+      <p class="locked-title">${expired ? t('Your access has expired') : t('Month {n} is part of the full program', {n: idx+1})}</p>
       <p class="muted">${expired
         ? 'Renew for another year, or switch to unlimited access so it never lapses again. Your logged sessions, streak and fretboard progress are all still saved.'
         : 'Month 1 is free and stays free. Months 2&ndash;12 cover barre chords, CAGED, pentatonics, modes, improvisation and performance &mdash; choose whichever suits you.'}</p>
@@ -2113,6 +2278,29 @@ function lockedMonthHtml(idx){
         <p class="muted mono redeem-status" data-redeem-status></p>
       </div>` : ''}
     </div>`;
+}
+/* Practice-sheet link for a single month. Rendered only inside that month's own panel,
+   so sheets are reached through the month that introduces them rather than from a
+   library listing every month at once. */
+function printRowHtml(idx){
+  const sheets = pSheetsForMonth(idx);
+  if(!sheets.length) return '';
+  return `
+    <div class="print-btn-row">
+      <button class="btn secondary" data-print-month="${idx}" type="button">
+        ${t('Print practice sheets ({n})', {n: sheets.length})}
+      </button>
+      <p class="muted print-hint">${t('{sheets} — choose “Save as PDF” in the print dialog to keep a copy.',
+            {sheets: sheets.map(x=>t(x.title)).join(' · ')})}</p>
+    </div>`;
+}
+function attachPrintHandlers(el){
+  el.querySelectorAll('[data-print-month]').forEach(b=>{
+    b.addEventListener('click', e=>{
+      e.stopPropagation();
+      openPrintSheets(parseInt(b.dataset.printMonth, 10));
+    });
+  });
 }
 function attachUnlockHandlers(el){
   el.querySelectorAll('[data-unlock]').forEach(b=>{
@@ -2161,9 +2349,15 @@ function attachUnlockHandlers(el){
 function renewalNoticeHtml(){
   if(!renewalDueSoon()) return '';
   const d = entitlementDaysLeft();
+  // Built with t() so the day count is a placeholder. Interpolating it directly would
+  // make every possible number its own key — 365 variants that could never all be
+  // translated.
+  const msg = tp(d, '<b>Your access ends in {n} day</b> ({date}). Renew to keep Months 2&ndash;12.',
+                    '<b>Your access ends in {n} days</b> ({date}). Renew to keep Months 2&ndash;12.',
+                    {date: formatExpiry()});
   return `
     <div class="renewal-notice">
-      <p><b>Your access ends in ${d} day${d===1?'':'s'}</b> (${formatExpiry()}). Renew to keep Months 2&ndash;12.</p>
+      <p>${msg}</p>
       <div class="row">
         <button class="btn" data-unlock="annual" type="button">Renew 1 year</button>
         <button class="btn secondary" data-unlock="lifetime" type="button">Switch to unlimited</button>
@@ -2178,7 +2372,9 @@ function accessStatusHtml(){
     return `<p class="muted access-line">Unlimited access &mdash; Months 2&ndash;12 are yours permanently.</p>`;
   }
   const d = entitlementDaysLeft();
-  return `<p class="muted access-line">Access runs until ${formatExpiry()} (${d} day${d===1?'':'s'} left).</p>`;
+  const msg = tp(d, 'Access runs until {date} ({n} day left).',
+                    'Access runs until {date} ({n} days left).', {date: formatExpiry()});
+  return `<p class="muted access-line">${msg}</p>`;
 }
 function renderDashboard(){
   const idx = state.currentMonth;
@@ -2187,6 +2383,7 @@ function renderDashboard(){
   const body = m.unlocked
     ? `<ul class="muted" style="padding-left:18px; line-height:1.8;">${m.items.map(i=>`<li>${i}</li>`).join('')}</ul>
        <div class="month-tools">${renderToolTags(m.tools)}</div>
+       ${printRowHtml(idx)}
        ${idx >= FREE_MONTH_COUNT ? accessStatusHtml() : ''}`
     : lockedMonthHtml(idx);
   el.innerHTML = `
@@ -2202,6 +2399,9 @@ function renderDashboard(){
   `;
   attachToolTagHandlers(el);
   attachUnlockHandlers(el);
+  attachPrintHandlers(el);
+  renderLevelControl();
+  applyGlossary();
   document.getElementById('nextMonthBtn').onclick = async ()=>{
     if(!state.monthsDone.includes(state.currentMonth)) state.monthsDone.push(state.currentMonth);
     state.currentMonth = Math.min(11, state.currentMonth+1);
@@ -2246,7 +2446,8 @@ function renderCurriculum(){
     const m = monthData(i);
     const body = m.unlocked
       ? `<ul>${m.items.map(it=>`<li>${it}</li>`).join('')}</ul>
-         <div class="month-tools">${renderToolTags(m.tools)}</div>`
+         <div class="month-tools">${renderToolTags(m.tools)}</div>
+         ${printRowHtml(i)}`
       : lockedMonthCompactHtml(i);
     return `
     <div class="month ${i===state.currentMonth?'current':''} ${m.unlocked?'':'is-locked'}" data-idx="${i}">
@@ -2264,6 +2465,7 @@ function renderCurriculum(){
   }).join('');
   attachToolTagHandlers(el);
   attachUnlockHandlers(el);
+  attachPrintHandlers(el);
   el.querySelectorAll('.month-head').forEach(h=>{
     h.addEventListener('click', (e)=>{
       if(e.target.closest('button')) return;
@@ -2653,6 +2855,1221 @@ function updateStrumHighlight(stepIdx, totalSteps){
   if(stepsEl.length===0) return;
   const mapped = Math.floor(stepIdx / totalSteps * pattern.length);
   stepsEl.forEach((s,i)=>s.classList.toggle('active', i===mapped));
+}
+
+
+
+
+/* ============================= LANGUAGES =============================
+   English lives in the page itself. Every other language is a separate file,
+   `lang-xx.js`, loaded only when someone picks it. Each file maps THE ENGLISH TEXT to its
+   translation, so a missing entry simply shows English rather than breaking the layout.
+
+   Translation happens in two places:
+     - t('...')         for strings built in JavaScript
+     - translateTree()  walks the DOM and swaps text that is already on the page, with a
+                        MutationObserver catching anything rendered later.
+   That combination means individual render functions don't each need rewriting. */
+const LANGS = { en:'English', es:'Español', fr:'Français', de:'Deutsch', pt:'Português',
+                ru:'Русский', zh:'中文', ja:'日本語', ko:'한국어' };
+const I18N = { lang:'en', dict:null, plain:null, naming:'letters', collect:false, missing:new Set(), extra:{} };
+const _norm = s => s.replace(/\s+/g,' ').trim();
+
+function t(key, params){
+  let s = key;
+  if(I18N.dict){
+    const hit = I18N.dict[_norm(key)];
+    if(hit!==undefined) s = hit;
+    else if(I18N.collect) I18N.missing.add(_norm(key));
+  } else if(I18N.collect){
+    I18N.missing.add(_norm(key));
+  }
+  if(params) s = s.replace(/\{(\w+)\}/g, (m,k)=> params[k]!==undefined ? params[k] : m);
+  return s;
+}
+/* Plurals: English picks by n===1. A translation may be a plain string, or an object keyed
+   by Intl.PluralRules category ({one, few, many, other}) for languages like Russian. */
+function tp(n, oneEn, otherEn, params){
+  const p = Object.assign({n}, params||{});
+  if(!I18N.dict) return t(n===1 ? oneEn : otherEn, p);
+  const v = I18N.dict[_norm(otherEn)];
+  if(v && typeof v==='object'){
+    const cat = new Intl.PluralRules(locTag()).select(n);
+    return (v[cat] || v.other || otherEn).replace(/\{(\w+)\}/g,(m,k)=> p[k]!==undefined ? p[k] : m);
+  }
+  return t(n===1 ? oneEn : otherEn, p);
+}
+function locTag(){ return I18N.lang==='en' ? undefined : ({zh:'zh-CN', pt:'pt-BR'}[I18N.lang] || I18N.lang); }
+
+function lookupText(raw){
+  if(!I18N.dict && !I18N.plain) return null;
+  const key = _norm(raw);
+  if(!key || !/[A-Za-z]/.test(key)) return null;   // numbers, note names, symbols
+  // Beginner level swaps in the plain-language version first, then translates that.
+  if(I18N.plain && I18N.plain[key]!==undefined){
+    const plain = I18N.plain[key];
+    if(!I18N.dict) return plain;
+    const tp_ = I18N.dict[_norm(plain)];
+    if(tp_!==undefined) return tp_;
+  }
+  if(!I18N.dict) return null;
+  const hit = I18N.dict[key];
+  if(hit!==undefined) return typeof hit==='object' ? (hit.other||null) : hit;
+  if(I18N.collect) I18N.missing.add(key);
+  return null;
+}
+
+const I18N_INLINE = new Set(['B','I','EM','STRONG','A','KBD','BR','CODE','SUP','SUB','SPAN','SMALL']);
+const I18N_SKIP = new Set(['SCRIPT','STYLE','TEXTAREA','INPUT']);
+const _translated = new WeakSet();
+
+/* Safe to swap a whole element's innerHTML only when its children are pure formatting and
+   nothing in it is targeted by code (no id, no data hooks the app reads). */
+function isSimpleUnit(el){
+  for(const c of el.children){
+    if(!I18N_INLINE.has(c.tagName) || c.id || c.hasAttribute('data-n') || c.hasAttribute('data-i')
+       || c.hasAttribute('data-view') || c.hasAttribute('data-tool-view')) return false;
+    if(c.children.length && !isSimpleUnit(c)) return false;
+  }
+  return true;
+}
+function translateAttrs(el){
+  ['aria-label','title','placeholder'].forEach(a=>{
+    const v = el.getAttribute && el.getAttribute(a);
+    if(!v) return;
+    const orig = el['__i18n_'+a] || v;
+    const tr = lookupText(orig);
+    if(tr!==null && tr!==v){ el['__i18n_'+a] = orig; el.setAttribute(a, tr); }
+  });
+}
+/* Builds a translatable key for an element whose text is interrupted by a live value,
+   e.g. "Tracks your activity for <span id="earMonthLabel">October 2026</span> — a rolling…".
+   The live child becomes a numbered placeholder so the sentence stays ONE key:
+   "Tracks your activity for {1} — a rolling…". Without this the sentence is chopped into
+   fragments at the span, which translates badly in any language and especially badly in
+   ones that reorder clauses.
+   Returns null when the element holds an interactive child (input, button, select…),
+   because rebuilding innerHTML would recreate that node and drop its event listeners. */
+const I18N_INTERACTIVE = new Set(['INPUT','BUTTON','SELECT','TEXTAREA','A','OPTION','LABEL']);
+function unitParts(el){
+  const parts = [];
+  let key = '';
+  for(const n of el.childNodes){
+    if(n.nodeType === 3){ key += n.nodeValue; continue; }
+    if(n.nodeType !== 1) continue;
+    const c = n;
+    if(I18N_INTERACTIVE.has(c.tagName) || c.querySelector && c.querySelector('input,button,select,textarea,a')) return null;
+    const opaque = !I18N_INLINE.has(c.tagName) || c.id || c.hasAttribute('data-n')
+                || c.hasAttribute('data-i') || c.hasAttribute('data-view') || c.hasAttribute('data-tool-view');
+    if(opaque){
+      parts.push(c.outerHTML);
+      key += '{' + parts.length + '}';
+    } else {
+      if(c.children.length && !isSimpleUnit(c)) return null;
+      key += c.outerHTML;
+    }
+  }
+  return { key, parts };
+}
+function translateTree(root){
+  if((!I18N.dict && !I18N.plain) || !root) return;
+  if(root.nodeType===3){ translateTextNode(root); return; }
+  if(root.nodeType!==1) return;
+  // SVG text is drawn from data (note names, fret numbers) and must not be touched;
+  // its aria-label still gets translated so screen readers follow the language.
+  if(I18N_SKIP.has(root.tagName) || (root.closest && root.closest('svg'))){
+    if(root.tagName==='svg') translateAttrs(root);
+    return;
+  }
+  if(root.hasAttribute && root.hasAttribute('data-no-i18n')) return;
+  translateAttrs(root);
+  const hasText = [...root.childNodes].some(n=>n.nodeType===3 && /[A-Za-z]/.test(n.nodeValue));
+  if(hasText && root.children.length && isSimpleUnit(root)){
+    const tr = lookupText(root.innerHTML);
+    if(tr!==null){ root.innerHTML = tr; _translated.add(root); return; }
+    if(I18N.collect) return;      // when collecting, the whole unit is the key
+  }
+  if(hasText && root.children.length && !isSimpleUnit(root)){
+    const u = unitParts(root);
+    if(u && u.parts.length){
+      const tr = lookupText(u.key);
+      if(tr!==null){
+        root.innerHTML = tr.replace(/\{(\d+)\}/g, (m,i)=> u.parts[+i-1] !== undefined ? u.parts[+i-1] : m);
+        _translated.add(root);
+        [...root.children].forEach(translateTree);   // restored children may hold text too
+        return;
+      }
+      if(I18N.collect) return;
+    }
+  }
+  for(const n of [...root.childNodes]){
+    if(n.nodeType===3) translateTextNode(n);
+    else if(n.nodeType===1) translateTree(n);
+  }
+}
+function translateTextNode(n){
+  if(_translated.has(n)) return;
+  const v = n.nodeValue;
+  if(!/[A-Za-z]/.test(v)) return;
+  const tr = lookupText(v);
+  if(tr!==null){
+    const lead = v.match(/^\s*/)[0], trail = v.match(/\s*$/)[0];
+    n.nodeValue = lead + tr + trail;
+    _translated.add(n);
+  }
+}
+let _i18nObserver = null;
+function startI18nObserver(){
+  if(_i18nObserver) return;
+  _i18nObserver = new MutationObserver(muts=>{
+    if(I18N.suspend) return;
+    if(!I18N.dict && !I18N.plain) return;
+    for(const m of muts){
+      if(m.type==='childList') m.addedNodes.forEach(translateTree);
+      else if(m.type==='characterData') translateTextNode(m.target);
+      else if(m.type==='attributes') translateAttrs(m.target);
+    }
+  });
+  _i18nObserver.observe(document.body, {childList:true, subtree:true, characterData:true,
+    attributes:true, attributeFilter:['aria-label','title','placeholder']});
+}
+function loadLangFile(code){
+  return new Promise(res=>{
+    if(window['LANG_'+code]) return res(window['LANG_'+code]);
+    const sc = document.createElement('script');
+    sc.src = `lang-${code}.js`;
+    sc.async = true;
+    sc.onload = ()=>res(window['LANG_'+code] || null);
+    sc.onerror = ()=>res(null);
+    document.head.appendChild(sc);
+  });
+}
+
+/* Note naming. Display only — internally every pitch keeps its sharp letter name, so
+   quizzes, audio and stored progress are unaffected by this setting. */
+const NAMING_DEFAULT = { en:'letters', es:'solfege', fr:'solfege', de:'german', pt:'solfege',
+                         ru:'letters', zh:'letters', ja:'letters', ko:'letters' };
+function namingLetter(letterWithAcc){
+  const n = String(letterWithAcc).replace('#','♯');
+  if(I18N.naming==='solfege'){
+    const fr = I18N.lang==='fr', ru = I18N.lang==='ru', pt = I18N.lang==='pt';
+    const map = ru ? {C:'До',D:'Ре',E:'Ми',F:'Фа',G:'Соль',A:'Ля',B:'Си'}
+              : pt ? {C:'Dó',D:'Ré',E:'Mi',F:'Fá',G:'Sol',A:'Lá',B:'Si'}
+              : {C:'Do',D:fr?'Ré':'Re',E:'Mi',F:'Fa',G:'Sol',A:'La',B:'Si'};
+    return (map[n[0]] || n[0]) + n.slice(1);
+  }
+  if(I18N.naming==='german'){
+    const g = {'C':'C','C♯':'Cis','D♭':'Des','D':'D','D♯':'Dis','E♭':'Es','E':'E','F':'F',
+               'F♯':'Fis','G♭':'Ges','G':'G','G♯':'Gis','A♭':'As','A':'A','A♯':'Ais','B♭':'B','B':'H'};
+    return g[n] || n;
+  }
+  return n;
+}
+
+async function setLanguage(code, opts={}){
+  I18N.collect = !!window.__I18N_COLLECT;
+  if(!LANGS[code]) code = 'en';
+  if(code === 'en'){
+    I18N.dict = null;
+  } else {
+    const data = await loadLangFile(code);
+    if(!data){
+      alert('Could not load that language file — staying in English.');
+      code = 'en'; I18N.dict = null;
+    } else {
+      I18N.dict = {};
+      Object.entries(data).forEach(([k,v])=>{ I18N.dict[_norm(k)] = v; });
+      Object.entries(I18N.extra[code]||{}).forEach(([k,v])=>{ I18N.dict[_norm(k)] = v; });
+    }
+  }
+  const prev = I18N.lang;
+  I18N.lang = code;
+  _glossRe = null;   // glossary is language-specific
+  if(!opts.keepNaming) I18N.naming = opts.naming || NAMING_DEFAULT[code] || 'letters';
+  document.documentElement.lang = locTag() || 'en';
+  ['langSelect','startLangSelect'].forEach(id=>{
+    const sel = document.getElementById(id);
+    if(sel) sel.value = code;
+  });
+  if(opts.save !== false){ storeSet('lang', code); storeSet('note-naming', I18N.naming); }
+  // Switching away from a loaded language needs the original English text back, and the
+  // cheapest correct way to get it is a reload — translation is one-way in the DOM.
+  if(opts.reloadIfNeeded && prev !== 'en' && prev !== code){ location.reload(); return; }
+  startI18nObserver();
+  stripGlossary();
+  translateTree(document.body);
+  if(typeof render === 'function' && opts.rerender !== false) render();
+  if(typeof applyGlossary === 'function') applyGlossary();
+}
+
+function buildLangSelects(){
+  const opts = Object.entries(LANGS).map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
+  ['langSelect','startLangSelect'].forEach(id=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    sel.innerHTML = opts;
+    sel.value = I18N.lang;
+    sel.addEventListener('change', ()=>{
+      // Going back to English (or between two non-English languages) needs the original
+      // page text, so those cases reload.
+      setLanguage(sel.value, {reloadIfNeeded:true});
+    });
+  });
+}
+/* Exposed for language files and for testing: tp() picks plural forms, namingLetter()
+   converts a letter name into the naming system the chosen language uses. */
+window.tp = tp;
+window.namingLetter = namingLetter;
+async function initLanguage(){
+  const saved = await storeGet('lang');
+  const naming = await storeGet('note-naming');
+  // First visit: follow the device language when it is one we ship.
+  let code = saved;
+  if(!code){
+    const nav = (navigator.language || 'en').slice(0,2).toLowerCase();
+    code = LANGS[nav] ? nav : 'en';
+  }
+  await setLanguage(code, {save:false, naming: naming || undefined, rerender:false});
+}
+
+/* ============================= LEARNING LEVEL =============================
+   A short check on first entry places the user at one of three levels. The levels change
+   how the app TALKS, never what it teaches:
+     new  — music words explained on tap, an intro card on each module, quizzes start Easy
+     some — standard wording, words still explained on tap, intro cards shown
+     exp  — full detail, explanations off by default (switchable any time)
+   Everything degrades safely: if a piece of level content is missing, the original text
+   simply stays. */
+const LEARN = { level:null, explain:true, introsSeen:{} };
+const LEVEL_NAMES = { new:'New to guitar', some:'Some experience', exp:'Experienced' };
+const LEVEL_DESC = {
+  new:"We'll explain music words when you tap them, introduce each module, and start quizzes on Easy.",
+  some:"Standard instructions, with music words explained when you tap them.",
+  exp:"Full detail, and explanations switched off. You can turn them back on any time."
+};
+
+/* Guitar-specific vocabulary. Each term is underlined in instructional text and explains
+   itself on tap. `en` holds every form the word appears in, separated by | . */
+const GLOSSARY = [
+  {id:'fret',    en:'fret|frets|fretted|fretting', def:'The metal strips along the neck. “3rd fret” means press the string just behind the third strip.'},
+  {id:'fretboard',en:'fretboard|fingerboard',      def:'The flat front of the neck where you press the strings down.'},
+  {id:'nut',     en:'nut',                          def:'The slotted strip at the top of the neck where the strings leave the headstock.'},
+  {id:'openstr', en:'open string|open strings',     def:'A string played without pressing any fret.'},
+  {id:'chord',   en:'chord|chords',                 def:'Three or more notes played together, usually strummed as one sound.'},
+  {id:'triad',   en:'triad|triads',                 def:'A basic three-note chord: the root, the 3rd and the 5th.'},
+  {id:'root',    en:'root|roots|root note',         def:'The note a chord is named after. G is the root of a G chord.'},
+  {id:'barre',   en:'barre|barre chord|barre chords', def:'Flattening one finger across every string to act like a movable nut.'},
+  {id:'caged',   en:'CAGED',                        def:'Five chord shapes (C, A, G, E, D) that link together to cover the whole neck.'},
+  {id:'power',   en:'power chord|power chords',     def:'A two-note chord using just the root and the 5th. Neither major nor minor.'},
+  {id:'progression',en:'progression|progressions',  def:'A series of chords played one after another — the backbone of a song.'},
+  {id:'strum',   en:'strum|strums|strumming',       def:'Dragging the pick or fingers across several strings at once.'},
+  {id:'downstroke',en:'downstroke|downstrokes|down-stroke', def:'Strumming from the thick strings towards the thin ones.'},
+  {id:'upstroke',en:'upstroke|upstrokes|up-stroke', def:'Strumming back from the thin strings towards the thick ones.'},
+  {id:'scale',   en:'scale|scales',                 def:'A set of notes played in order, step by step, up or down.'},
+  {id:'pent',    en:'pentatonic',                   def:'A five-note scale. The easiest door into soloing — the notes sound good almost anywhere.'},
+  {id:'blues',   en:'blues scale',                  def:'The minor pentatonic plus one extra gritty note, the “blue note”.'},
+  {id:'mode',    en:'mode|modes',                   def:'A scale started from a different note of the major scale, giving it a new mood.'},
+  {id:'interval',en:'interval|intervals',           def:'The distance between two notes.'},
+  {id:'semitone',en:'semitone|semitones|half step|half-step', def:'The smallest step on a guitar: one fret.'},
+  {id:'octave',  en:'octave|octaves',               def:'From one note to the next note of the same name — twelve frets higher.'},
+  {id:'major',   en:'major',                        def:'A bright, happy-sounding chord or scale.'},
+  {id:'minor',   en:'minor',                        def:'A darker, sadder-sounding chord or scale.'},
+  {id:'degree',  en:'scale degree|scale degrees|degree|degrees', def:'A note’s position in its scale: 1 is the first note, 3 the third, and so on.'},
+  {id:'tonic',   en:'tonic',                        def:'The “home” note of a key or scale.'},
+  {id:'dominant',en:'dominant',                     def:'The chord built on the 5th note of the key. It pulls strongly back home.'},
+  {id:'dim',     en:'diminished',                   def:'A tense, unsettled chord built from equal small steps.'},
+  {id:'aug',     en:'augmented',                    def:'A dreamy, unresolved chord built from two large steps.'},
+  {id:'metronome',en:'metronome',                   def:'A steady click that keeps time so you don’t speed up or slow down.'},
+  {id:'bpm',     en:'bpm',                          def:'Beats per minute — how fast the music goes. 60 bpm is one beat a second.'},
+  {id:'beat',    en:'beat|beats',                   def:'The steady pulse you would tap your foot to.'},
+  {id:'bar',     en:'bar|bars',                     def:'A small group of beats, usually four. Music is divided into bars.'},
+  {id:'timesig', en:'time signature|time signatures', def:'The two numbers (like 4/4) saying how many beats are in each bar.'},
+  {id:'syncop',  en:'syncopated|syncopation',       def:'Accents landing between the beats, which gives the music a push.'},
+  {id:'shuffle', en:'shuffle',                      def:'A lopsided, swinging feel: long–short, long–short.'},
+  {id:'poly',    en:'polyrhythm|polyrhythmic',      def:'Two different rhythms running at the same time.'},
+  {id:'arpeggio',en:'arpeggio|arpeggios',           def:'The notes of a chord played one at a time instead of together.'},
+  {id:'improv',  en:'improvise|improvising|improvisation', def:'Making up music on the spot.'},
+  {id:'lick',    en:'lick|licks',                   def:'A short musical phrase — a musical catchphrase.'},
+  {id:'bend',    en:'bend|bending|bends',           def:'Pushing a string sideways to raise its pitch.'},
+  {id:'vibrato', en:'vibrato',                      def:'A small, repeated wobble in pitch that makes a held note sing.'},
+  {id:'legato',  en:'legato',                       def:'Smoothly joined notes, sounded with the fretting hand rather than the pick.'},
+  {id:'hammer',  en:'hammer-on|hammer-ons',         def:'Sounding a note by tapping a finger onto the string, without picking.'},
+  {id:'pulloff', en:'pull-off|pull-offs',           def:'Sounding a lower note by plucking the string with the fretting finger as it lifts.'},
+  {id:'altpick', en:'alternate picking',            def:'Strict down-up-down-up picking, which is what allows real speed.'},
+  {id:'capo',    en:'capo',                         def:'A clamp on the neck that raises the pitch of every string at once.'},
+  {id:'transpose',en:'transpose|transposition',     def:'Moving music to a different key, so it sounds higher or lower.'},
+  {id:'voice',   en:'voice leading',                def:'Moving each note to the nearest note of the next chord so changes sound smooth.'},
+  {id:'chordtone',en:'chord tone|chord tones',      def:'A note that belongs to the chord being played. Landing on one always sounds right.'},
+  {id:'ear',     en:'ear training',                 def:'Learning to recognise notes, intervals and chords just by listening.'},
+  {id:'tab',     en:'tab|tablature',                def:'Guitar notation: six lines for six strings, with fret numbers on them.'},
+];
+
+/* One short card per module, shown the first time a beginner opens it. */
+const MODULE_INTROS = {
+  curriculum:"The full one-year plan. Each month lists a few things to practise. Open your current month, work through it over a few weeks, then mark it done. You can revisit earlier months any time.",
+  ear:"Ear training teaches you to recognise what you hear. Press play, listen, then pick an answer. A few minutes daily beats one long session.",
+  rhythm:"Rhythm is about keeping a steady beat. The metronome clicks in time; try to strum exactly with it. Tap along on the pad to test how steady you really are.",
+  chords:"A chord is several notes played together, and a progression is a series of chords — the backbone of most songs. Tap any progression to hear it loop.",
+  shapes:"The same chord can be played in several places on the neck. Pick a chord to see exactly where to put your fingers.",
+  fretboard:"This is where you learn the name of every note on the neck. Start on Easy: a position lights up and you name it. Positions you get right stay lit.",
+  soloing:"Soloing means making up your own lines. Pick a scale and every highlighted note will fit the backing loop. There are no wrong answers here.",
+  patterns:"A scale is a set of notes played in order. This shows every scale in the app and all five neck positions, so you can see how they join up.",
+  log:"Record each practice session here. It keeps your streak going and feeds the progress marker at the top of the page.",
+};
+
+/* ---------- the level check ---------- */
+const LC = { step:0, score:0, answers:[], fretWrong:false };
+const LC_QUESTIONS = [
+  {q:'Have you played guitar before?',        opts:['Never','A little','Yes, regularly'],        pts:[0,1,2]},
+  {q:'Can you read a chord diagram?',         opts:['No','Roughly','Yes'],                        pts:[0,1,2]},
+  {q:'Do you know what a chord is?',          opts:['Not really','Roughly','Yes, and inversions'],pts:[0,1,2]},
+  {type:'fret'},
+  {type:'chord'},
+];
+
+/* A small six-string neck for the hands-on question. Deliberately plain: this is a test,
+   so it carries no fret markers or note names that would give the answer away. */
+function lcMiniNeck(){
+  const W=360, H=168, left=28, top=14, sSp=24, fSp=(W-left-14)/5;   // H leaves room for the fret numbers at y≈154
+  const names=['E','A','D','G','B','e'];
+  const rowY = st => top + (5-st)*sSp;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="lc-neck" role="group" aria-label="Fretboard">`;
+  s += `<line x1="${left}" y1="${rowY(5)}" x2="${left}" y2="${rowY(0)}" stroke="#3a3226" stroke-width="5"/>`;
+  for(let f=1;f<=5;f++){
+    const x=left+f*fSp;
+    s += `<line x1="${x}" y1="${rowY(5)}" x2="${x}" y2="${rowY(0)}" stroke="#3a3226" stroke-width="1"/>`;
+    s += `<text x="${x-fSp/2}" y="${rowY(0)+20}" text-anchor="middle" class="lc-fretnum">${f}</text>`;
+  }
+  for(let st=0;st<6;st++){
+    const y=rowY(st);
+    s += `<line x1="${left}" y1="${y}" x2="${W-14}" y2="${y}" stroke="#3a3226" stroke-width="${st<2?1.6:1}"/>`;
+    s += `<text x="${left-9}" y="${y+4}" text-anchor="end" class="lc-strname">${names[st]}</text>`;
+  }
+  // tappable cells
+  for(let st=0;st<6;st++) for(let f=1;f<=5;f++){
+    const x=left+(f-1)*fSp, y=rowY(st)-sSp/2;
+    s += `<rect class="lc-cell" data-s="${st}" data-f="${f}" x="${x}" y="${y}" width="${fSp}" height="${sSp}" fill="transparent" tabindex="0" role="button" aria-label="String ${names[st]}, fret ${f}"/>`;
+  }
+  s += `</svg>`;
+  return s;
+}
+/* A chord diagram the user has to name. G major: a shape they will meet in Month 1. */
+function lcChordDiagram(){
+  return pChordBox(CHORDS.G.frets, {label:''});
+}
+
+function openLevelCheck(){
+  Object.assign(LC, {step:0, score:0, answers:[], fretWrong:false});
+  let ov = document.getElementById('levelCheck');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id='levelCheck'; ov.className='level-check';
+    ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true');
+    ov.setAttribute('aria-labelledby','lcTitle');
+    document.body.appendChild(ov);
+  }
+  ov.hidden = false;
+  renderLevelStep();
+}
+function closeLevelCheck(){
+  const ov=document.getElementById('levelCheck');
+  if(ov) ov.hidden = true;
+}
+function renderLevelStep(){
+  const ov=document.getElementById('levelCheck'), total=LC_QUESTIONS.length;
+  if(LC.step >= total) return renderLevelResult();
+  const q = LC_QUESTIONS[LC.step];
+  let body='';
+  if(q.type==='fret'){
+    body = `<h3 id="lcTitle">Tap the 3rd fret of the low E string.</h3>
+            <p class="muted lc-help">The low E is the thickest string — the bottom row here.</p>
+            ${lcMiniNeck()}
+            <button class="btn secondary lc-skip" data-lc-skip="1" type="button">I'm not sure</button>`;
+  } else if(q.type==='chord'){
+    body = `<h3 id="lcTitle">Which chord is this?</h3>
+            <div class="lc-chord">${lcChordDiagram()}</div>
+            <div class="lc-opts">${['E major','G major','A minor','D major']
+              .map(o=>`<button class="btn secondary" data-lc-chord="${o}" type="button">${o}</button>`).join('')}</div>`;
+  } else {
+    body = `<h3 id="lcTitle">${q.q}</h3>
+            <div class="lc-opts">${q.opts.map((o,i)=>
+              `<button class="btn secondary" data-lc-opt="${i}" type="button">${o}</button>`).join('')}</div>`;
+  }
+  ov.innerHTML = `
+    <div class="lc-card">
+      <p class="lc-step">Question ${LC.step+1} of ${total}</p>
+      ${body}
+      <button class="lc-close" data-lc-close="1" type="button" aria-label="Skip the level check">Skip</button>
+    </div>`;
+  attachLevelHandlers(ov);
+}
+function lcAdvance(points){
+  LC.score += points;
+  LC.step++;
+  renderLevelStep();
+}
+function attachLevelHandlers(ov){
+  ov.querySelectorAll('[data-lc-opt]').forEach(b=>b.addEventListener('click',()=>{
+    const q = LC_QUESTIONS[LC.step];
+    lcAdvance(q.pts[parseInt(b.dataset.lcOpt,10)]);
+  }));
+  ov.querySelectorAll('[data-lc-chord]').forEach(b=>b.addEventListener('click',()=>{
+    lcAdvance(b.dataset.lcChord === 'G major' ? 2 : 0);
+  }));
+  ov.querySelectorAll('[data-lc-skip]').forEach(b=>b.addEventListener('click',()=>{
+    LC.fretWrong = true; lcAdvance(0);
+  }));
+  ov.querySelectorAll('.lc-cell').forEach(c=>{
+    const answer = ()=>{
+      const right = c.dataset.s==='0' && c.dataset.f==='3';
+      if(!right) LC.fretWrong = true;
+      lcAdvance(right ? 2 : 0);
+    };
+    c.addEventListener('click', answer);
+    c.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); answer(); } });
+  });
+  ov.querySelectorAll('[data-lc-close]').forEach(b=>b.addEventListener('click',()=>{
+    // Skipping shouldn't silently assume beginner — leave the level unset and let the
+    // Dashboard control offer it again.
+    closeLevelCheck();
+    storeSet('level-check-skipped', true);
+  }));
+}
+function recommendedLevel(){
+  // 10 points available. Getting the hands-on questions wrong caps the recommendation,
+  // because those test the thing the app actually asks you to do.
+  if(LC.score <= 3) return 'new';
+  if(LC.score <= 7 || LC.fretWrong) return 'some';
+  return 'exp';
+}
+function renderLevelResult(){
+  const ov=document.getElementById('levelCheck');
+  const rec = recommendedLevel();
+  ov.innerHTML = `
+    <div class="lc-card">
+      <h3 id="lcTitle">Where would you like to start?</h3>
+      <p class="muted lc-help">Based on your answers we suggest <b>${LEVEL_NAMES[rec]}</b>, but pick whichever you prefer. You can change this any time on the Dashboard.</p>
+      <div class="lc-levels">
+        ${['new','some','exp'].map(k=>`
+          <button class="lc-level" data-lc-level="${k}" type="button">
+            <span class="lc-level-head"><b>${LEVEL_NAMES[k]}</b>${k===rec?`<span class="tag">Recommended</span>`:''}</span>
+            <span class="muted">${LEVEL_DESC[k]}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+  ov.querySelectorAll('[data-lc-level]').forEach(b=>b.addEventListener('click', async ()=>{
+    await setLearnLevel(b.dataset.lcLevel);
+    closeLevelCheck();
+  }));
+}
+
+async function setLearnLevel(level){
+  LEARN.level = level;
+  LEARN.explain = level !== 'exp';
+  // Writes are debounced (~800ms each). Awaiting them would freeze the UI for over a
+  // second after the user picks a level, so fire and carry on — the values are already
+  // live in memory.
+  storeSet('learn-level', level);
+  storeSet('learn-explain', LEARN.explain);
+  // Beginners start quizzes on the gentlest setting rather than being dropped in at
+  // whatever the app last used.
+  if(level === 'new'){
+    const easy = document.getElementById('quizDiffEasy');
+    if(easy && !easy.classList.contains('active')) easy.click();
+  }
+  render();
+  applyGlossary();
+}
+
+/* ---------- glossary: underline known words, explain on tap ---------- */
+let _glossRe = null, _glossLang = null;
+/* The glossary matches literal words, so it only works in the language the text is
+   actually in. A language file may supply window.LANG_xx_GLOSSARY — an array of
+   {terms, def} using that language's own words — and it replaces the English set while
+   that language is active. Without one, terms simply aren't underlined: the sentences
+   still read correctly, they just don't explain themselves. */
+function activeGlossary(){
+  const loc = window['LANG_' + I18N.lang + '_GLOSSARY'];
+  if(I18N.lang !== 'en' && Array.isArray(loc)) return loc.map(g=>({en:g.terms, def:g.def}));
+  if(I18N.lang !== 'en') return [];
+  return GLOSSARY;
+}
+function glossaryRegex(){
+  if(_glossRe && _glossLang === I18N.lang) return _glossRe;
+  const set = activeGlossary();
+  if(!set.length){ _glossRe = null; _glossLang = I18N.lang; return null; }
+  const alts = set.flatMap(g=>g.en.split('|')).sort((a,b)=>b.length-a.length)
+                .map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  // Chinese, Japanese and Korean don't separate words with spaces, so demanding a
+  // word boundary would mean the glossary never matched anything in those languages.
+  // CJK terms are matched bare; everything else keeps boundaries so that, say, "bar"
+  // doesn't light up inside "barre".
+  const cjk = /[\u3000-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uac00-\ud7af\uf900-\ufaff]/;
+  const bare = alts.filter(w=>cjk.test(w));
+  const bounded = alts.filter(w=>!cjk.test(w));
+  const parts = [];
+  if(bounded.length) parts.push('(?:^|[^\\p{L}])(?:' + bounded.join('|') + ')(?![\\p{L}])');
+  if(bare.length) parts.push('(?:' + bare.join('|') + ')');
+  // One capture group for the leading character (may be empty), one for the term.
+  _glossRe = new RegExp(
+    '(^|[^\\p{L}])(' + bounded.join('|') + ')(?![\\p{L}])' +
+    (bare.length ? '|()(' + bare.join('|') + ')' : ''),
+    'giu');
+  _glossRe.__hasBare = bare.length > 0;
+  _glossLang = I18N.lang;
+  return _glossRe;
+}
+function glossaryDef(word){
+  const w = word.toLowerCase();
+  const hit = activeGlossary().find(g=>g.en.split('|').some(f=>f.toLowerCase()===w));
+  return hit ? hit.def : null;
+}
+const GLOSS_SCOPE = '.panel p.muted, .panel li, .month-body li, .welcome-panel li';
+/* Glossary annotation wraps words in <button class="gloss">, which is NOT an inline tag
+   as far as the translator is concerned — a paragraph containing one stops being a single
+   translatable unit and would be split into fragments at every explained word. So the
+   order matters: strip glossary, translate whole sentences, then re-annotate. */
+function stripGlossary(){
+  // Suspending the observer matters: removing the buttons briefly leaves the sentence as
+  // several adjacent text nodes, and an observer running then would treat each piece as a
+  // separate string — which is exactly how the sentences got fragmented before.
+  I18N.suspend = true;
+  document.querySelectorAll('.gloss').forEach(el=>{
+    const parent = el.parentNode;
+    el.replaceWith(document.createTextNode(el.textContent));
+    if(parent) parent.normalize();      // rejoin the split text nodes
+  });
+  I18N.suspend = false;
+  if(_i18nObserver) _i18nObserver.takeRecords();   // discard what just happened
+}
+function applyGlossary(){
+  stripGlossary();
+  // Render functions call this synchronously, which lands BEFORE the MutationObserver's
+  // callback runs. If we annotated now, the observer would afterwards meet a sentence
+  // already broken up by <button class="gloss"> and fail to match the whole-sentence key.
+  // So translate here, explicitly, while the text is still intact.
+  if(I18N.dict || I18N.plain) translateTree(document.body);
+  if(!LEARN.explain){ if(_i18nObserver) _i18nObserver.takeRecords(); return; }
+  I18N.suspend = true;
+  const re = glossaryRegex();
+  if(!re){
+    // No glossary for this language. Must still lift the suspension, or the observer
+    // stays switched off and nothing rendered afterwards ever gets translated.
+    I18N.suspend = false;
+    if(_i18nObserver) _i18nObserver.takeRecords();
+    return;
+  }
+  document.querySelectorAll(GLOSS_SCOPE).forEach(host=>{
+    if(host.closest('#printRoot')) return;
+    [...host.childNodes].forEach(n=>{
+      if(n.nodeType!==3) return;
+      const txt = n.nodeValue;
+      if(!re.test(txt)){ re.lastIndex=0; return; }
+      re.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      while((m = re.exec(txt))){
+        // Branch 1 (bounded) fills m[1]/m[2]; branch 2 (bare CJK) fills m[3]/m[4].
+        const word = m[2] !== undefined ? m[2] : m[4];
+        const lead = (m[2] !== undefined ? m[1] : m[3]) || '';
+        if(word === undefined) continue;
+        const def = glossaryDef(word);
+        if(!def) continue;
+        const at = m.index + lead.length;
+        frag.appendChild(document.createTextNode(txt.slice(last, at)));
+        const b = document.createElement('button');
+        b.type='button'; b.className='gloss'; b.textContent=word;
+        b.setAttribute('aria-label', word + ': ' + def);
+        b.title = def;
+        frag.appendChild(b);
+        last = at + word.length;
+      }
+      frag.appendChild(document.createTextNode(txt.slice(last)));
+      n.replaceWith(frag);
+    });
+  });
+  I18N.suspend = false;
+  if(_i18nObserver) _i18nObserver.takeRecords();
+}
+document.addEventListener('click', e=>{
+  const g = e.target.closest && e.target.closest('.gloss');
+  const pop = document.getElementById('glossPop');
+  if(!g){ if(pop) pop.remove(); return; }
+  e.preventDefault(); e.stopPropagation();
+  if(pop) pop.remove();
+  const def = glossaryDef(g.textContent);
+  if(!def) return;
+  const el = document.createElement('div');
+  el.id='glossPop'; el.className='gloss-pop'; el.setAttribute('role','status');
+  el.innerHTML = `<b>${g.textContent}</b><span>${def}</span>`;
+  document.body.appendChild(el);
+  const r = g.getBoundingClientRect();
+  const top = r.bottom + window.scrollY + 6;
+  el.style.top = top + 'px';
+  el.style.left = Math.max(8, Math.min(r.left + window.scrollX, window.innerWidth - el.offsetWidth - 8)) + 'px';
+});
+
+/* ---------- per-module intro card ---------- */
+function moduleIntroHtml(view){
+  if(!LEARN.explain) return '';
+  const text = MODULE_INTROS[view];
+  if(!text || LEARN.introsSeen[view]) return '';
+  return `<div class="panel intro-card" data-intro="${view}">
+      <div class="row" style="justify-content:space-between; align-items:flex-start;">
+        <h2 style="margin:0;">What is this module for?</h2>
+        <button class="btn ghost" data-intro-dismiss="${view}" type="button">Got it</button>
+      </div>
+      <p class="muted" style="margin:10px 0 0;">${text}</p>
+    </div>`;
+}
+function showModuleIntro(view){
+  const host = document.getElementById('view-'+view);
+  if(!host) return;
+  host.querySelectorAll('.intro-card').forEach(c=>c.remove());
+  const html = moduleIntroHtml(view);
+  if(!html) return;
+  host.insertAdjacentHTML('afterbegin', html);
+  const card = host.querySelector('.intro-card');
+  card.querySelector('[data-intro-dismiss]').addEventListener('click', async ()=>{
+    LEARN.introsSeen[view] = true;
+    storeSet('intros-seen', LEARN.introsSeen);
+    card.remove();
+  });
+}
+
+/* Small control on the Dashboard so the level is visible and changeable without
+   hunting through settings. */
+function renderLevelControl(){
+  const host = document.getElementById('dashMonth');
+  if(!host) return;
+  const prev = document.getElementById('levelControl');
+  if(prev) prev.remove();
+  if(!LEARN.level) return;
+  const el = document.createElement('div');
+  el.id = 'levelControl';
+  el.className = 'level-control';
+  el.innerHTML = `
+    <span class="muted">Teaching level: <b>${LEVEL_NAMES[LEARN.level]}</b></span>
+    <span class="row" style="gap:8px;">
+      <label class="muted level-explain"><input type="checkbox" id="explainToggle" ${LEARN.explain?'checked':''}> Explain music words</label>
+      <button class="btn ghost" id="retakeLevel" type="button">Retake check</button>
+    </span>`;
+  host.appendChild(el);
+  el.querySelector('#retakeLevel').addEventListener('click', ()=>openLevelCheck());
+  el.querySelector('#explainToggle').addEventListener('change', async (e)=>{
+    LEARN.explain = e.target.checked;
+    storeSet('learn-explain', LEARN.explain);
+    applyGlossary();
+  });
+}
+
+async function initLearnLevel(){
+  const lv = await storeGet('learn-level');
+  const ex = await storeGet('learn-explain');
+  const seen = await storeGet('intros-seen');
+  if(seen && typeof seen==='object') LEARN.introsSeen = seen;
+  if(lv && LEVEL_NAMES[lv]){
+    LEARN.level = lv;
+    LEARN.explain = (typeof ex==='boolean') ? ex : (lv!=='exp');
+    applyGlossary();
+    return;
+  }
+  const skipped = await storeGet('level-check-skipped');
+  // The splash screen is still covering the page at this point, so opening the dialog
+  // here would sit on top of it and trap the user. Flag it instead; the Enter button
+  // opens it once the app is actually visible.
+  if(!skipped) LEARN.pendingCheck = true;
+}
+
+/* ============================= PRINTABLE SHEETS =============================
+   Practice sheets rendered as plain black-on-white SVG, sized for US Letter /A4.
+
+   These deliberately do NOT reuse the app's on-screen fretboard renderer: that one
+   draws wood gradients, coloured note dots and theme-aware strokes, all of which
+   either waste ink or turn into indistinguishable grey blocks on a mono printer.
+   Everything below is line art with high-contrast fills.
+
+   Access rule: a month's sheets are reachable only from that month's own panel, and
+   only when the month is unlocked. Locked months expose no sheets at all. */
+
+const PRINT_COPYRIGHT = {
+  holder: "R Paul's Guitar Academy",
+  // Shown at the foot of every single printed page.
+  line: "© {year} R Paul's Guitar Academy. All rights reserved. " +
+        "Licensed for personal practice use only — copying, redistribution or resale is prohibited.",
+};
+function printCopyrightText(){
+  return PRINT_COPYRIGHT.line.replace('{year}', new Date().getFullYear());
+}
+
+/* ---------- low-level renderers ---------- */
+
+/* Standard vertical chord box. Handles positions up the neck (shows a fret number
+   instead of a nut) and barres. frets: array of 6, low E first; -1 = muted, 0 = open. */
+function pChordBox(frets, opts={}){
+  const label = opts.label || '';
+  const fingers = opts.fingers || null;     // optional array of 6 finger numbers
+  const barre = opts.barre || null;         // {fret, from, to} in absolute frets
+  const W=116, H=138, left=30, top=32, strings=6, nFrets=opts.nFrets || 4;
+  const sSp=(W-2*left)/(strings-1), fSp=(H-top-16)/nFrets;
+
+  const played = frets.filter(f=>f>0);
+  let base = 1;
+  if(played.length && Math.min(...played) > 1 && Math.max(...played) > nFrets){
+    base = Math.min(...played);
+  }
+  const showNut = base === 1;
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="pbox" role="img" aria-label="${label||'chord diagram'}">`;
+  if(label) s += `<text x="${W/2}" y="12" text-anchor="middle" class="pbox-name">${label}</text>`;
+
+  // strings (vertical)
+  for(let i=0;i<strings;i++){
+    const x=left+i*sSp;
+    s += `<line x1="${x}" y1="${top}" x2="${x}" y2="${top+nFrets*fSp}" stroke="#000" stroke-width="1"/>`;
+  }
+  // frets (horizontal)
+  for(let f=0; f<=nFrets; f++){
+    const y=top+f*fSp;
+    const thick = (f===0 && showNut) ? 4 : 1;
+    s += `<line x1="${left}" y1="${y}" x2="${left+(strings-1)*sSp}" y2="${y}" stroke="#000" stroke-width="${thick}"/>`;
+  }
+  if(!showNut){
+    s += `<text x="${left-11}" y="${top+fSp*0.72}" text-anchor="end" class="pbox-fret">${base}fr</text>`;
+  }
+  // barre first, so dots sit on top
+  if(barre){
+    const rel = barre.fret - base + 1;
+    if(rel>=1 && rel<=nFrets){
+      const y = top+(rel-0.5)*fSp;
+      const x1 = left+barre.from*sSp, x2 = left+barre.to*sSp;
+      s += `<rect x="${x1-7}" y="${y-7}" width="${x2-x1+14}" height="14" rx="7" fill="#000"/>`;
+    }
+  }
+  frets.forEach((fr,i)=>{
+    const x=left+i*sSp;
+    if(fr===-1){
+      s += `<text x="${x}" y="${top-7}" text-anchor="middle" class="pbox-mark">×</text>`;
+    } else if(fr===0){
+      s += `<circle cx="${x}" cy="${top-11}" r="4.5" fill="none" stroke="#000" stroke-width="1.6"/>`;
+    } else {
+      const rel = fr - base + 1;
+      if(rel<1 || rel>nFrets) return;
+      const y = top+(rel-0.5)*fSp;
+      const inBarre = barre && barre.fret===fr && i>=barre.from && i<=barre.to;
+      if(!inBarre) s += `<circle cx="${x}" cy="${y}" r="7" fill="#000"/>`;
+      if(fingers && fingers[i]){
+        s += `<text x="${x}" y="${y+3.6}" text-anchor="middle" class="pbox-finger">${fingers[i]}</text>`;
+      }
+    }
+  });
+  s += `</svg>`;
+  return s;
+}
+
+/* Horizontal neck diagram for scales and note maps. Open, uncluttered, printer-safe:
+   filled dots are roots, hollow dots are the other scale tones. */
+function pNeck(opts={}){
+  const from = opts.from ?? 0, to = opts.to ?? 12;
+  // `from` is the first fret shown. Fret 0 means "include open strings", which are
+  // drawn in their own column to the left of the nut rather than inside the board.
+  const showOpen = from === 0;
+  const startFret = Math.max(1, from);
+  const cells = Math.max(1, to - startFret + 1);
+
+  const W = 660, labelW = 16, openW = showOpen ? 22 : 0;
+  const left = labelW + openW + 14;       // leaves room for string names AND open dots
+  const right = 14, top = 26, sSp = 26;
+  const fSp = (W - left - right) / cells;
+  const H = top + 5*sSp + 34;
+  const names = ['E','A','D','G','B','e'];
+  const rowY = st => top + (5-st)*sSp;    // low E at the bottom, as the player sees it
+
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="pneck" role="img" aria-label="${opts.label||'fretboard diagram'}">`;
+  // nut (only meaningful at the start of the neck)
+  if(showOpen) s += `<line x1="${left}" y1="${rowY(5)}" x2="${left}" y2="${rowY(0)}" stroke="#000" stroke-width="5"/>`;
+  else s += `<line x1="${left}" y1="${rowY(5)}" x2="${left}" y2="${rowY(0)}" stroke="#000" stroke-width="1.6"/>`;
+
+  for(let i=1;i<=cells;i++){
+    const x = left + i*fSp;
+    s += `<line x1="${x}" y1="${rowY(5)}" x2="${x}" y2="${rowY(0)}" stroke="#000" stroke-width="1"/>`;
+  }
+  for(let i=0;i<cells;i++){
+    const n = startFret + i;
+    const cx = left + (i+0.5)*fSp;
+    s += `<text x="${cx}" y="${rowY(0)+22}" text-anchor="middle" class="pneck-fret">${n}</text>`;
+    if([3,5,7,9,15,17,19,21].includes(n)) s += `<circle cx="${cx}" cy="${rowY(0)+30}" r="2" fill="#555"/>`;
+    if(n===12 || n===24){
+      s += `<circle cx="${cx-4}" cy="${rowY(0)+30}" r="2" fill="#555"/>`;
+      s += `<circle cx="${cx+4}" cy="${rowY(0)+30}" r="2" fill="#555"/>`;
+    }
+  }
+  for(let st=0; st<6; st++){
+    const y = rowY(st);
+    s += `<line x1="${left}" y1="${y}" x2="${W-right}" y2="${y}" stroke="#000" stroke-width="${st<2?1.6:1}"/>`;
+    s += `<text x="${labelW}" y="${y+4}" text-anchor="end" class="pneck-str">${names[st]}</text>`;
+  }
+  (opts.dots||[]).forEach(d=>{
+    let x;
+    if(d.fret === 0){
+      if(!showOpen) return;                       // open strings only shown at the nut
+      x = left - openW/2 - 2;
+    } else {
+      if(d.fret < startFret || d.fret > to) return;
+      x = left + (d.fret - startFret + 0.5)*fSp;
+    }
+    const y = rowY(d.string), r = 9.5;
+    if(d.root){
+      s += `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`;
+      s += `<text x="${x}" y="${y+3.6}" text-anchor="middle" class="pneck-dot-on">${d.label||''}</text>`;
+    } else {
+      s += `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="#000" stroke-width="1.6"/>`;
+      s += `<text x="${x}" y="${y+3.6}" text-anchor="middle" class="pneck-dot-off">${d.label||''}</text>`;
+    }
+  });
+  s += `</svg>`;
+  return s;
+}
+
+/* Strum / rhythm grid. beats e.g. 4, subdivision 2 = eighths.
+   pattern: array of 'D' | 'U' | '' matching beats*sub slots. */
+function pRhythm(pattern, opts={}){
+  const sub = opts.sub || 2, beats = opts.beats || 4;
+  const slots = beats*sub;
+  const W=620, left=30, top=24, cell=(W-left-14)/slots, H=top+78;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="prhythm" role="img" aria-label="${opts.label||'strum pattern'}">`;
+  s += `<line x1="${left}" y1="${top+34}" x2="${W-14}" y2="${top+34}" stroke="#000" stroke-width="1"/>`;
+  for(let i=0;i<slots;i++){
+    const x = left+i*cell, mid = x+cell/2;
+    const onBeat = i%sub===0;
+    s += `<line x1="${x}" y1="${top+22}" x2="${x}" y2="${top+46}" stroke="#000" stroke-width="${onBeat?2:0.8}"/>`;
+    const count = onBeat ? String(i/sub+1) : (sub===2 ? '&' : ['e','&','a'][i%sub-1] || '');
+    s += `<text x="${mid}" y="${top+64}" text-anchor="middle" class="prhythm-count">${count}</text>`;
+    const sym = pattern[i];
+    if(sym==='D') s += `<text x="${mid}" y="${top+14}" text-anchor="middle" class="prhythm-arrow">↓</text>`;
+    if(sym==='U') s += `<text x="${mid}" y="${top+14}" text-anchor="middle" class="prhythm-arrow">↑</text>`;
+  }
+  s += `<line x1="${W-14}" y1="${top+22}" x2="${W-14}" y2="${top+46}" stroke="#000" stroke-width="2"/>`;
+  s += `</svg>`;
+  return s;
+}
+
+/* Chord chart: rows of bars with a chord symbol in each, for progressions and blues forms. */
+function pChart(bars, opts={}){
+  const perRow = opts.perRow || 4;
+  const rows = [];
+  for(let i=0;i<bars.length;i+=perRow) rows.push(bars.slice(i,i+perRow));
+  const cellW = 150, cellH = 54;
+  const W = perRow*cellW + 2, H = rows.length*cellH + 2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" class="pchart" role="img" aria-label="${opts.label||'chord chart'}">`;
+  rows.forEach((row,r)=>{
+    row.forEach((bar,c)=>{
+      const x=1+c*cellW, y=1+r*cellH;
+      s += `<rect x="${x}" y="${y}" width="${cellW}" height="${cellH}" fill="none" stroke="#000" stroke-width="1"/>`;
+      s += `<text x="${x+cellW/2}" y="${y+cellH/2+7}" text-anchor="middle" class="pchart-sym">${bar}</text>`;
+    });
+  });
+  s += `</svg>`;
+  return s;
+}
+
+/* ---------- music helpers (self-contained; no UI state) ---------- */
+function pScaleDots(rootName, scaleKey, from, to, opts={}){
+  const rootPc = NOTE_NAMES.indexOf(rootName);
+  const iv = SCALES[scaleKey].intervals;
+  const pcs = iv.map(i=>(rootPc+i)%12);
+  const dots = [];
+  for(let st=0; st<6; st++){
+    for(let f=from; f<=to; f++){
+      const pc = (TUNING[st]+f)%12;
+      const k = pcs.indexOf(pc);
+      if(k<0) continue;
+      dots.push({string:st, fret:f, root: pc===rootPc,
+                 label: opts.degrees ? SCALES[scaleKey].degrees[k] : (opts.noteNames ? NOTE_NAMES[pc] : '')});
+    }
+  }
+  return dots;
+}
+function pNaturalNoteDots(strings, from, to){
+  const dots=[];
+  strings.forEach(st=>{
+    for(let f=from; f<=to; f++){
+      const n = NOTE_NAMES[(TUNING[st]+f)%12];
+      if(n.includes('#')) continue;
+      dots.push({string:st, fret:f, root:false, label:n});
+    }
+  });
+  return dots;
+}
+/* Movable barre shapes, expressed relative to the root fret on their anchor string. */
+function pBarreShape(kind, rootFret){
+  const f = rootFret;
+  switch(kind){
+    case 'E-major':  return {frets:[f,f+2,f+2,f+1,f,f],   barre:{fret:f, from:0, to:5}};
+    case 'E-minor':  return {frets:[f,f+2,f+2,f,f,f],     barre:{fret:f, from:0, to:5}};
+    case 'E-dom7':   return {frets:[f,f+2,f,f+1,f,f],     barre:{fret:f, from:0, to:5}};
+    case 'A-major':  return {frets:[-1,f,f+2,f+2,f+2,f],  barre:{fret:f, from:1, to:5}};
+    case 'A-minor':  return {frets:[-1,f,f+2,f+2,f+1,f],  barre:{fret:f, from:1, to:5}};
+    case 'A-dom7':   return {frets:[-1,f,f+2,f,f+2,f],    barre:{fret:f, from:1, to:5}};
+  }
+}
+/* The five CAGED major shapes, as played for a C major chord up the neck. */
+const PRINT_CAGED = [
+  {name:'C shape',  frets:[-1,3,2,0,1,0],   root:'C at 3rd string'},
+  {name:'A shape',  frets:[-1,3,5,5,5,3],   barre:{fret:3,from:1,to:5}, root:'C at 5th string'},
+  {name:'G shape',  frets:[8,7,5,5,5,8],    barre:{fret:5,from:2,to:4}, root:'C at 6th string'},
+  {name:'E shape',  frets:[8,10,10,9,8,8],  barre:{fret:8,from:0,to:5}, root:'C at 6th string'},
+  {name:'D shape',  frets:[-1,-1,10,12,13,12], root:'C at 4th string'},
+];
+
+/* ---------- what each month gets ----------
+   Each entry returns an array of sheets; each sheet becomes exactly one printed page,
+   and every page carries the copyright line. Content is drawn from that month's actual
+   curriculum items, so the sheets match what the student is being asked to practise. */
+
+function pSheetsForMonth(idx){
+  const S = [];
+  const chordRow = (keys, opts={}) =>
+    `<div class="pgrid">` + keys.map(k=>{
+      const c = CHORDS[k];
+      return `<div class="pcell">${pChordBox(c.frets, Object.assign({label:c.name}, opts))}</div>`;
+    }).join('') + `</div>`;
+
+  switch(idx){
+    case 0: // Month 1 — Foundation Setup
+      S.push({ title:'Open Chords', subtitle:'The eight shapes for Month 1. × = do not play, ○ = open string.',
+        body: chordRow(['E','A','D','G','C','Em','Am','Dm'])
+          + `<p class="pnote">Aim for every note ringing cleanly. Fret just behind the fret wire, press with the fingertips, and keep the thumb behind the neck.</p>` });
+      S.push({ title:'Strum Pattern &amp; First Notes',
+        subtitle:'Basic pattern: down-down-up-up-down-up. Count out loud while you play.',
+        body: pRhythm(['D','','D','U','U','','D','U'], {label:'down down up up down up'})
+          + `<h3 class="psub">Natural notes — low E and high e, frets 0–5</h3>`
+          + pNeck({from:0, to:5, dots: pNaturalNoteDots([0,5],0,5), label:'natural notes on the outer strings'})
+          + `<p class="pnote">Both outer strings share the same note names. Learn them once and you know both.</p>` });
+      break;
+
+    case 1: // Month 2 — Rhythm & Changes
+      S.push({ title:'Chord Change Drill', subtitle:'One minute per pair. Count every clean change; write your best score.',
+        body: `<table class="ptable"><thead><tr><th>Chord pair</th><th>Target</th><th>Day 1</th><th>Day 7</th><th>Day 14</th><th>Day 21</th></tr></thead><tbody>`
+          + [['Em → C','30'],['G → D','30'],['Am → F-shape','24'],['C → G','30'],['D → A','30'],['Dm → Am','30']]
+            .map(([p,t])=>`<tr><td>${p}</td><td>${t}</td><td></td><td></td><td></td><td></td></tr>`).join('')
+          + `</tbody></table>`
+          + `<h3 class="psub">Syncopated strum — the “and” of beat 2 is deliberately missed</h3>`
+          + pRhythm(['D','','','U','D','U','D','U'], {label:'syncopated pattern'})
+          + `<p class="pnote">Keep the strumming hand moving through the gap. The miss is in the contact, not the motion.</p>` });
+      S.push({ title:'Natural Notes — A and D strings', subtitle:'Frets 0–5. Say each note aloud as you play it.',
+        body: pNeck({from:0, to:5, dots: pNaturalNoteDots([1,2],0,5), label:'natural notes on A and D strings'})
+          + `<h3 class="psub">Blank neck — fill these in from memory</h3>`
+          + pNeck({from:0, to:5, dots: [], label:'blank fretboard for practice'}) });
+      break;
+
+    case 2: // Month 3 — First Progressions
+      S.push({ title:'I–IV–V in Three Keys', subtitle:'The same progression, three different keys.',
+        body: `<h3 class="psub">Key of G</h3>` + chordRow(['G','C','D'])
+          + `<h3 class="psub">Key of C</h3>` + chordRow(['C','G','G7'])
+          + `<h3 class="psub">Key of A</h3>` + chordRow(['A','D','E'])
+          + `<p class="pnote">In every key the pattern is the same: I, then the chord four steps up, then five steps up.</p>` });
+      S.push({ title:'12-Bar Blues in A', subtitle:'The most-played form in popular music. Shuffle feel.',
+        body: pChart(['A7','A7','A7','A7','D7','D7','A7','A7','E7','D7','A7','E7'], {perRow:4, label:'12 bar blues in A'})
+          + `<h3 class="psub">Shuffle strum — long, short, long, short</h3>`
+          + pRhythm(['D','','D','U','D','','D','U'], {label:'shuffle feel'})
+          + `<h3 class="psub">The three chords</h3>` + chordRow(['A7','D7','E7']) });
+      break;
+
+    case 3: // Month 4 — Barre Chords
+      S.push({ title:'Barre Chords — E Shape', subtitle:'Root on the low E string. Slide the shape to change key.',
+        body: `<div class="pgrid">`
+          + [['F major (1st fret)','E-major',1],['G major (3rd fret)','E-major',3],
+             ['F minor (1st fret)','E-minor',1],['G minor (3rd fret)','E-minor',3]]
+            .map(([lab,kind,fr])=>{const sh=pBarreShape(kind,fr);
+              return `<div class="pcell">${pChordBox(sh.frets,{label:lab,barre:sh.barre,nFrets:5})}</div>`;}).join('')
+          + `</div>`
+          + `<h3 class="psub">Root notes on the low E string</h3>`
+          + pNeck({from:0,to:12,dots:pNaturalNoteDots([0],0,12),label:'low E string note map'})
+          + `<p class="pnote">Find the root on the low E string, lay the barre there, and the shape gives you that chord.</p>` });
+      S.push({ title:'Barre Chords — A Shape', subtitle:'Root on the A string.',
+        body: `<div class="pgrid">`
+          + [['B♭ major (1st fret)','A-major',1],['C major (3rd fret)','A-major',3],
+             ['B♭ minor (1st fret)','A-minor',1],['C minor (3rd fret)','A-minor',3]]
+            .map(([lab,kind,fr])=>{const sh=pBarreShape(kind,fr);
+              return `<div class="pcell">${pChordBox(sh.frets,{label:lab,barre:sh.barre,nFrets:5})}</div>`;}).join('')
+          + `</div>`
+          + `<h3 class="psub">Root notes on the A string</h3>`
+          + pNeck({from:0,to:12,dots:pNaturalNoteDots([1],0,12),label:'A string note map'})
+          + `<h3 class="psub">16th-note strumming — all four subdivisions</h3>`
+          + pRhythm(['D','U','D','U','D','U','D','U','D','U','D','U','D','U','D','U'],{sub:4,label:'sixteenth note strumming'}) });
+      break;
+
+    case 4: // Month 5 — CAGED
+      S.push({ title:'The Five CAGED Shapes', subtitle:'All five are C major, in order up the neck.',
+        body: `<div class="pgrid">` + PRINT_CAGED.map(sh=>
+            `<div class="pcell">${pChordBox(sh.frets,{label:sh.name,barre:sh.barre,nFrets:5})}</div>`).join('')
+          + `</div>`
+          + `<p class="pnote">Played in order, the five shapes cover the whole neck and then repeat at the 12th fret. Each shape shares notes with its neighbours — that overlap is what makes the system work.</p>` });
+      S.push({ title:'Minor Pentatonic — Box 1', subtitle:'Filled dots are root notes.',
+        body: `<h3 class="psub">A minor pentatonic, 5th position</h3>`
+          + pNeck({from:4,to:9,dots:pScaleDots('A','minorPent',4,9),label:'A minor pentatonic box 1'})
+          + `<h3 class="psub">E minor pentatonic, open position</h3>`
+          + pNeck({from:0,to:5,dots:pScaleDots('E','minorPent',0,5),label:'E minor pentatonic'})
+          + `<h3 class="psub">G minor pentatonic, 3rd position</h3>`
+          + pNeck({from:2,to:7,dots:pScaleDots('G','minorPent',2,7),label:'G minor pentatonic'}) });
+      break;
+
+    case 5: // Month 6 — Pentatonic Power
+      S.push({ title:'Minor Pentatonic — Full Neck', subtitle:'A minor pentatonic across all five positions.',
+        body: pNeck({from:0,to:15,dots:pScaleDots('A','minorPent',0,15),label:'A minor pentatonic full neck'})
+          + `<h3 class="psub">Scale degrees</h3>`
+          + pNeck({from:4,to:16,dots:pScaleDots('A','minorPent',4,16,{degrees:true}),label:'A minor pentatonic with degrees'})
+          + `<p class="pnote">Five positions, each starting where the last leaves off. Learn the joins, not just the boxes.</p>` });
+      S.push({ title:'Major Pentatonic &amp; the Blues Scale',
+        subtitle:'A major pentatonic shares every note with F♯ minor pentatonic.',
+        body: `<h3 class="psub">A major pentatonic</h3>`
+          + pNeck({from:0,to:12,dots:pScaleDots('A','majorPent',0,12),label:'A major pentatonic'})
+          + `<h3 class="psub">A blues scale — minor pentatonic plus the ♭5 “blue note”</h3>`
+          + pNeck({from:0,to:12,dots:pScaleDots('A','blues',0,12,{degrees:true}),label:'A blues scale'})
+          + `<p class="pnote">The blue note is a passing tone. Land on it briefly and move on.</p>` });
+      break;
+
+    case 6: // Month 7 — Improvisation Basics
+      S.push({ title:'Blues Soloing Toolkit', subtitle:'A blues scale over a 12-bar blues in A.',
+        body: pChart(['A7','A7','A7','A7','D7','D7','A7','A7','E7','D7','A7','E7'],{perRow:4,label:'12 bar blues'})
+          + `<h3 class="psub">A blues scale, 5th position</h3>`
+          + pNeck({from:4,to:9,dots:pScaleDots('A','blues',4,9,{degrees:true}),label:'A blues scale position 1'})
+          + `<h3 class="psub">Bending targets — bend up to the circled pitch</h3>`
+          + `<p class="pnote">Full-tone bends: 7th fret G string up to A. Semitone bends: 8th fret B string up to G. Check each bend against the fretted note first.</p>` });
+      S.push({ title:'The ii–V–I Progression', subtitle:'The backbone of jazz, and common in pop and blues.',
+        body: pChart(['Dm7','Dm7','G7','G7','Cmaj7','Cmaj7','Cmaj7','Cmaj7'],{perRow:4,label:'ii V I in C'})
+          + `<h3 class="psub">The three chords in C</h3>` + chordRow(['Dm7','G7','Cmaj7'])
+          + `<p class="pnote">Dm7 is the ii, G7 the V, Cmaj7 the I. The pull from G7 back to C is the strongest movement in tonal music.</p>` });
+      break;
+
+    case 7: // Month 8 — Modes & Color
+      S.push({ title:'Dorian Mode', subtitle:'Minor with a raised 6th — minor, but brighter.',
+        body: pNeck({from:0,to:12,dots:pScaleDots('D','dorian',0,12,{degrees:true}),label:'D dorian'})
+          + `<h3 class="psub">Compare: D natural minor (the 6th is flat)</h3>`
+          + pNeck({from:0,to:12,dots:pScaleDots('D','natMinor',0,12,{degrees:true}),label:'D natural minor'})
+          + `<p class="pnote">One note separates them. Play both over a Dm vamp and listen for the lift.</p>` });
+      S.push({ title:'Mixolydian Mode', subtitle:'Major with a flattened 7th — the dominant sound.',
+        body: pNeck({from:0,to:12,dots:pScaleDots('G','mixolydian',0,12,{degrees:true}),label:'G mixolydian'})
+          + `<h3 class="psub">Compare: G major (the 7th is natural)</h3>`
+          + pNeck({from:0,to:12,dots:pScaleDots('G','major',0,12,{degrees:true}),label:'G major'})
+          + `<h3 class="psub">Legato drill — hammer-ons and pull-offs</h3>`
+          + `<p class="pnote">Three notes per string, ascending with hammer-ons and descending with pull-offs. Only the first note of each string is picked.</p>` });
+      break;
+
+    case 8: // Month 9 — Speed & Precision
+      S.push({ title:'Alternate Picking Log', subtitle:'Raise the tempo only when a take is completely clean.',
+        body: `<table class="ptable"><thead><tr><th>Drill</th><th>Start bpm</th><th>Week 1</th><th>Week 2</th><th>Week 3</th><th>Week 4</th></tr></thead><tbody>`
+          + ['Chromatic 1-2-3-4','Single-string 16ths','Scale run, 2 octaves','String crossing','Three notes per string']
+            .map(d=>`<tr><td>${d}</td><td></td><td></td><td></td><td></td><td></td></tr>`).join('')
+          + `</tbody></table>`
+          + `<h3 class="psub">A natural minor across the full neck</h3>`
+          + pNeck({from:0,to:15,dots:pScaleDots('A','natMinor',0,15),label:'A natural minor full neck'}) });
+      S.push({ title:'Chord-Tone Targets', subtitle:'Aim at the 3rd and the 7th — they define the chord.',
+        body: pChart(['Dm7','G7','Cmaj7','Cmaj7'],{perRow:4,label:'ii V I'})
+          + `<table class="ptable"><thead><tr><th>Chord</th><th>Root</th><th>3rd</th><th>5th</th><th>7th</th></tr></thead><tbody>`
+          + [['Dm7','D','F','A','C'],['G7','G','B','D','F'],['Cmaj7','C','E','G','B']]
+            .map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')
+          + `</tbody></table>`
+          + `<h3 class="psub">Blank neck — map the chord tones yourself</h3>`
+          + pNeck({from:0,to:12,dots:[],label:'blank neck worksheet'}) });
+      break;
+
+    case 9: // Month 10 — Advanced Techniques
+      S.push({ title:'Odd Time Signatures', subtitle:'Count aloud before you play. The accent falls on 1.',
+        body: `<h3 class="psub">5/4 — five beats to the bar</h3>`
+          + pRhythm(['D','','D','U','D','','D','U','D',''],{beats:5,sub:2,label:'five four'})
+          + `<h3 class="psub">7/8 — grouped 3 + 2 + 2</h3>`
+          + pRhythm(['D','','','D','','D',''],{beats:7,sub:1,label:'seven eight'})
+          + `<p class="pnote">7/8 is easier felt as three uneven pulses than as seven even ones.</p>` });
+      S.push({ title:'Borrowed Chords', subtitle:'Chords taken from the parallel minor key.',
+        body: pChart(['Am','F','C','G'],{perRow:4,label:'i VI III VII'})
+          + `<div class="pgrid">` + ['Am','C','G'].map(k=>
+              `<div class="pcell">${pChordBox(CHORDS[k].frets,{label:CHORDS[k].name})}</div>`).join('')
+          + `<div class="pcell">${pChordBox(pBarreShape('E-major',1).frets,{label:'F major',barre:pBarreShape('E-major',1).barre,nFrets:5})}</div>`
+          + `</div>`
+          + `<p class="pnote">i–VI–III–VII in A minor. Borrowing from the parallel key is where a progression gets its colour.</p>` });
+      break;
+
+    case 10: // Month 11 — Style Immersion
+      S.push({ title:'Transcription Worksheet', subtitle:'One phrase per style. Work in short loops, slowed down.',
+        body: ['Blues','Classic rock','Metal','Alt-rock'].map(style=>
+            `<h3 class="psub">${style}</h3>
+             <table class="ptable"><tbody>
+               <tr><td style="width:22%">Song / artist</td><td></td></tr>
+               <tr><td>Key &amp; tempo</td><td></td></tr>
+               <tr><td>Phrase location</td><td></td></tr>
+               <tr><td>What makes it work</td><td></td></tr>
+             </tbody></table>`).join('') });
+      S.push({ title:'Polyrhythm &amp; Note Naming', subtitle:'Three against four — clap it before you play it.',
+        body: `<h3 class="psub">3 against 4 — top row is three, bottom row is four</h3>`
+          + pRhythm(['D','','','','D','','','','D','','',''],{beats:3,sub:4,label:'three'})
+          + pRhythm(['D','','','D','','','D','','','D','',''],{beats:4,sub:3,label:'four'})
+          + `<h3 class="psub">Note-naming sprint — fill in every natural note</h3>`
+          + pNeck({from:0,to:12,dots:[],label:'blank neck for note naming'}) });
+      break;
+
+    case 11: // Month 12 — Integration & Performance
+      S.push({ title:'Song Learning Plan', subtitle:'Three songs, three styles, intro to end.',
+        body: [1,2,3].map(n=>
+            `<h3 class="psub">Song ${n}</h3>
+             <table class="ptable"><tbody>
+               <tr><td style="width:22%">Title / artist</td><td></td></tr>
+               <tr><td>Style &amp; key</td><td></td></tr>
+               <tr><td>Hardest section</td><td></td></tr>
+               <tr><td>Performance-ready date</td><td></td></tr>
+             </tbody></table>`).join('') });
+      S.push({ title:'Year Review &amp; Next Goals', subtitle:'Compare honestly against your Month 1 recording.',
+        body: `<table class="ptable"><thead><tr><th>Area</th><th>Month 1</th><th>Month 12</th><th>Next year's goal</th></tr></thead><tbody>`
+          + ['Chord changes','Rhythm &amp; timing','Fretboard knowledge','Ear training','Improvisation','Technique','Repertoire']
+            .map(a=>`<tr><td>${a}</td><td></td><td></td><td></td></tr>`).join('')
+          + `</tbody></table>`
+          + `<p class="pnote">Specific goals beat ambitious ones. “Play a full blues solo in three keys without stopping” is workable; “get better at soloing” is not.</p>` });
+      break;
+  }
+  return S;
+}
+
+/* ---------- the print engine ---------- */
+function openPrintSheets(idx){
+  const m = monthData(idx);
+  if(!m.unlocked){
+    alert('Practice sheets for Month ' + (idx+1) + ' unlock with the full program.');
+    return;
+  }
+  const sheets = pSheetsForMonth(idx);
+  if(!sheets.length){ alert('No printable sheets for this month yet.'); return; }
+
+  const root = document.getElementById('printRoot');
+  root.innerHTML = sheets.map((sh,i)=>`
+    <section class="sheet">
+      <header class="sheet-head">
+        <div>
+          <p class="sheet-kicker">R Paul's Guitar Academy &middot; Month ${idx+1}: ${m.title}</p>
+          <h2 class="sheet-title">${sh.title}</h2>
+          ${sh.subtitle ? `<p class="sheet-sub">${sh.subtitle}</p>` : ''}
+        </div>
+        <p class="sheet-num">Sheet ${i+1} of ${sheets.length}</p>
+      </header>
+      <div class="sheet-body">${sh.body}</div>
+      <footer class="sheet-foot">${printCopyrightText()}</footer>
+    </section>`).join('');
+
+  document.body.classList.add('printing');
+  // Let layout settle before handing off to the print dialog, otherwise Safari can
+  // capture the page mid-reflow and drop the last sheet.
+  setTimeout(()=>{
+    window.print();
+    // Cleanup runs on the afterprint event where supported, with a timer as a fallback
+    // for browsers that never fire it.
+    const done = ()=>{
+      document.body.classList.remove('printing');
+      root.innerHTML = '';
+      window.removeEventListener('afterprint', done);
+    };
+    window.addEventListener('afterprint', done);
+    setTimeout(done, 60000);
+  }, 120);
 }
 
 /* ============================= CHORDS VIEW ============================= */
@@ -3145,15 +4562,18 @@ function masteredCountInRange(minFret,maxFret){
 }
 function updateQuizRangeInfo(){
   const el = document.getElementById('quizRangeInfo');
+  // Built through t() with named placeholders rather than string interpolation, so the
+  // whole sentence stays one translatable key and translators can reorder it freely.
+  const total = (FRETS+1)*6;
   if(quizDifficulty==='easy'){
-    const mastered = masteredCountInRange(0,5);
-    el.textContent = `Easy — working one string at a time, fret 1–5, low E to high e. ${mastered}/30 positions identified so far.`;
+    el.textContent = t('Easy — working one string at a time, fret 1–5, low E to high e. {done}/{total} positions identified so far.',
+      {done: masteredCountInRange(0,5), total: 30});
   } else if(quizDifficulty==='moderate'){
-    const mastered = masteredCountInRange(0,FRETS);
-    el.textContent = `Moderate — vertical sweep at fret ${modFret}, string by string from low E to high e. ${mastered}/${(FRETS+1)*6} positions identified so far.`;
+    el.textContent = t('Moderate — vertical sweep at fret {fret}, string by string from low E to high e. {done}/{total} positions identified so far.',
+      {fret: modFret, done: masteredCountInRange(0,FRETS), total});
   } else {
-    const mastered = masteredCountInRange(0,FRETS);
-    el.textContent = `Difficult — anywhere on the neck, fully random. ${mastered}/${(FRETS+1)*6} positions identified so far.`;
+    el.textContent = t('Difficult — anywhere on the neck, fully random. {done}/{total} positions identified so far.',
+      {done: masteredCountInRange(0,FRETS), total});
   }
 }
 function drawCurrentQuizBoard(){
